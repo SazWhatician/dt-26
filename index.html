@@ -240,7 +240,7 @@
             </div>
 
             <div class="mt-8 z-50 relative pointer-events-auto" id="magnet-btn-container">
-                <button class="insane-btn accelerate" onclick="scrollToSection('#footer')">
+                <button class="insane-btn accelerate" onclick="window.location.href='registration.html'">
                     <span class="btn-text" data-value="REGISTER NOW">REGISTER NOW</span>
                 </button>
             </div>
@@ -511,7 +511,7 @@
         
         // SCRAMBLE EFFECT
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        btn.onmouseenter = event => {  
+        btn.onmouseenter = event => {  
             let iteration = 0;
             const originalText = btnText.dataset.value;
             clearInterval(btn.interval);
