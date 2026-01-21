@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration | DevTalks 2026</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap" rel="stylesheet">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#010103',
+                        midnight: '#030712',
+                        royal: '#172554',
+                        electric: '#22d3ee',
+                        neonBlue: '#3b82f6',
+                        glass: 'rgba(255, 255, 255, 0.05)',
+                    },
+                    fontFamily: {
+                        sans: ['"Stack Sans Notch"', 'sans-serif'],
+                        mono: ['monospace'],
+                    },
+                    backgroundImage: {
+                        'lux-gradient': 'radial-gradient(circle at center, #172554 0%, #030712 60%, #010103 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            overflow-x: hidden;
+            margin: 0;
+            background-color: #010103;
+            color: #fff;
+            font-family: "Stack Sans Notch", sans-serif;
+            cursor: none;
+            overscroll-behavior: none;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        html {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* --- CURSOR --- */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #22d3ee;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate3d(-50%, -50%, 0);
+            mix-blend-mode: difference;
+            transition: width 0.3s, height 0.3s;
+        }
+
+        #cursor.hovered {
+            width: 60px;
+            height: 60px;
+            background: rgba(34, 211, 238, 0.1);
+            border-color: transparent;
+        }
+
+        /* --- GLASSMORPHISM FORM --- */
+        .glass-card {
+            background: rgba(3, 7, 18, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.1), inset 0 0 20px rgba(34, 211, 238, 0.05);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 5px rgba(34, 211, 238, 0.8), 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        /* --- INPUT STYLES --- */
+        .form-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: "Stack Sans Notch", sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #22d3ee;
+            background: rgba(34, 211, 238, 0.05);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-label {
+            color: #22d3ee;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* --- SUBMIT BUTTON --- */
+        .submit-btn {
+            position: relative;
+            padding: 1.25rem 3rem;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+            border: 2px solid #22d3ee;
+            color: #ffffff;
+            font-family: monospace;
+            font-size: 1rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 600;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.3), inset 0 0 20px rgba(34, 211, 238, 0.1);
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, #22d3ee 0%, #3b82f6 100%);
+            transform: skewX(-20deg);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 0;
+        }
+
+        .submit-btn:hover::before {
+            transform: translate(50%, 0) skewX(-20deg);
+        }
+
+        .submit-btn .btn-text {
+            position: relative;
+            z-index: 2;
+            display: inline-block;
+            transition: color 0.3s;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+        }
+
+        .submit-btn:hover .btn-text {
+            color: #000;
+            font-weight: 900;
+            text-shadow: none;
+        }
+
+        .submit-btn:hover {
+            box-shadow: 0 0 50px rgba(34, 211, 238, 0.6), inset 0 0 30px rgba(34, 211, 238, 0.2);
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* --- HERO TEXT --- */
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            font-weight: 700;
+            background: linear-gradient(to bottom, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* --- NAVBAR --- */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+            height: 24px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            font-weight: 500;
+        }
+
+        .nav-link span {
+            display: block;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-link:hover .original {
+            transform: translateY(-100%);
+        }
+
+        .nav-link:hover .hover-clone {
+            transform: translateY(0);
+        }
+
+        .hover-clone {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #22d3ee;
+            transform: translateY(100%);
+        }
+
+        /* --- ANIMATED BACKGROUND PARTICLES --- */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #22d3ee;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.5;
+            }
+
+            90% {
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* --- PRICE DISPLAY --- */
+        .price-tag {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.15);
+        }
+
+        .price-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #22d3ee;
+            line-height: 1;
+        }
+
+        /* --- ERROR MESSAGE --- */
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .error-msg.show {
+            display: block;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-electric selection:text-void">
+
+    <div id="cursor"></div>
+
+    <!-- NAVBAR -->
+    <nav
+        class="fixed top-0 left-0 w-full px-6 md:px-12 py-6 z-50 flex justify-between items-center text-white bg-transparent">
+        <div class="font-bold text-xl tracking-[0.2em] select-none cursor-pointer z-[101]"
+            onclick="window.location.href='index.html'">
+            DT<span class="text-electric">'26</span>
+        </div>
+
+        <div class="hidden md:flex gap-12">
+            <div class="nav-link group" onclick="window.location.href='index.html'">
+                <span class="original">HOME</span>
+                <span class="hover-clone">HOME</span>
+            </div>
+            <div class="nav-link group">
+                <span class="original">REGISTER</span>
+                <span class="hover-clone">REGISTER</span>
+            </div>
+        </div>
+
+        <div class="md:hidden text-electric text-3xl cursor-pointer" onclick="window.location.href='index.html'">
+            &#8592;
+        </div>
+    </nav>
+
+    <!-- ANIMATED BACKGROUND -->
+    <div class="absolute inset-0 bg-lux-gradient opacity-60 -z-10"></div>
+    <div id="particles-container" class="fixed inset-0 overflow-hidden pointer-events-none -z-10"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="relative z-10 min-h-screen flex items-center justify-center px-4 py-24">
+        <div class="w-full max-w-2xl">
+
+            <!-- HEADER -->
+            <div class="text-center mb-12">
+                <h1 class="hero-title mb-4 glow-text">REGISTER</h1>
+                <p class="text-gray-400 text-lg tracking-widest uppercase">DevTalks 2026 | Jan 24-25</p>
+            </div>
+
+            <!-- REGISTRATION FORM -->
+            <div class="glass-card rounded-2xl p-8 md:p-12 mb-8">
+                <form id="registration-form" class="space-y-6">
+
+                    <!-- NAME -->
+                    <div>
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-input w-full"
+                            placeholder="Enter your full name" required>
+                        <div class="error-msg" id="name-error">Please enter your name</div>
+                    </div>
+
+                    <!-- REGISTRATION NUMBER -->
+                    <div>
+                        <label class="form-label">Registration Number</label>
+                        <input type="text" id="registration-number" name="registration-number" class="form-input w-full"
+                            placeholder="Enter your registration number" required>
+                        <div class="error-msg" id="reg-error">Please enter your registration number</div>
+                    </div>
+
+                    <!-- BRANCH -->
+                    <div>
+                        <label class="form-label">Branch</label>
+                        <input type="text" id="branch" name="branch" class="form-input w-full"
+                            placeholder="Enter your branch" required>
+                        <div class="error-msg" id="branch-error">Please enter your branch</div>
+                    </div>
+
+                    <!-- PHONE NUMBER -->
+                    <div>
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-input w-full"
+                            placeholder="Enter your phone number" pattern="[0-9]{10}" required>
+                        <div class="error-msg" id="phone-error">Please enter a valid 10-digit phone number</div>
+                    </div>
+
+                    <!-- EMAIL -->
+                    <div>
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-input w-full"
+                            placeholder="Enter your email address" required>
+                        <div class="error-msg" id="email-error">Please enter a valid email address</div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- PAYMENT SECTION -->
+            <div class="glass-card rounded-2xl p-8 md:p-12">
+                <div class="price-tag mb-8">
+                    <p class="text-gray-400 uppercase tracking-widest text-sm mb-2">Registration Fee</p>
+                    <div class="price-amount">₹51</div>
+                    <p class="text-gray-500 text-xs mt-2 tracking-wide">Including all taxes</p>
+                </div>
+
+                <button type="button" id="payment-btn" class="submit-btn">
+                    <span class="btn-text">Proceed to Payment</span>
+                </button>
+
+                <p class="text-center text-gray-500 text-xs mt-4 tracking-wide">
+                    Secure payment powered by <span class="text-electric">Razorpay</span>
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- CURSOR LOGIC ---
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('a, button, input, select, .nav-link').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // --- ANIMATED PARTICLES ---
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // --- FORM VALIDATION ---
+        function validateForm() {
+            let isValid = true;
+            const form = document.getElementById('registration-form');
+
+            // Name validation
+            const name = document.getElementById('name');
+            const nameError = document.getElementById('name-error');
+            if (!name.value.trim()) {
+                nameError.classList.add('show');
+                isValid = false;
+            } else {
+                nameError.classList.remove('show');
+            }
+
+            // Registration number validation
+            const regNum = document.getElementById('registration-number');
+            const regError = document.getElementById('reg-error');
+            if (!regNum.value.trim()) {
+                regError.classList.add('show');
+                isValid = false;
+            } else {
+                regError.classList.remove('show');
+            }
+
+            // Branch validation
+            const branch = document.getElementById('branch');
+            const branchError = document.getElementById('branch-error');
+            if (!branch.value) {
+                branchError.classList.add('show');
+                isValid = false;
+            } else {
+                branchError.classList.remove('show');
+            }
+
+            // Phone validation
+            const phone = document.getElementById('phone');
+            const phoneError = document.getElementById('phone-error');
+            const phoneRegex = /^[0-9]{10}$/;
+            if (!phoneRegex.test(phone.value)) {
+                phoneError.classList.add('show');
+                isValid = false;
+            } else {
+                phoneError.classList.remove('show');
+            }
+
+            // Email validation
+            const email = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                emailError.classList.add('show');
+                isValid = false;
+            } else {
+                emailError.classList.remove('show');
+            }
+
+            return isValid;
+        }
+
+        // --- INITIALIZE SUPABASE ---
+        const SUPABASE_URL = 'https://wlwtpcainqjlgueslbas.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indsd3RwY2FpbnFqbGd1ZXNsYmFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDIyMTcsImV4cCI6MjA4NDU3ODIxN30.aznn-5fbEXI9XmqtaRwSxkfkAT6QL-MNSZHlvONzri8';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // --- SAVE REGISTRATION TO SUPABASE ---
+        async function saveRegistration(formData, paymentId, paymentStatus) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('registrations')
+                    .insert([
+                        {
+                            name: formData.name,
+                            registration_number: formData.registrationNumber,
+                            branch: formData.branch,
+                            phone: formData.phone,
+                            email: formData.email,
+                            payment_id: paymentId,
+                            payment_status: paymentStatus,
+                            amount: 5100
+                        }
+                    ])
+                    .select();
+
+                if (error) {
+                    console.error('Supabase Error:', error);
+                    throw error;
+                }
+
+                console.log('Registration saved successfully:', data);
+                return data;
+            } catch (error) {
+                console.error('Error saving registration:', error);
+                throw error;
+            }
+        }
+
+        // --- RAZORPAY PAYMENT INTEGRATION WITH SUPABASE ---
+        document.getElementById('payment-btn').addEventListener('click', function () {
+            if (!validateForm()) {
+                return;
+            }
+
+            // Disable button to prevent double clicks
+            const paymentBtn = document.getElementById('payment-btn');
+            const originalText = paymentBtn.querySelector('.btn-text').textContent;
+            paymentBtn.disabled = true;
+            paymentBtn.querySelector('.btn-text').textContent = 'PROCESSING...';
+
+            const formData = {
+                name: document.getElementById('name').value,
+                registrationNumber: document.getElementById('registration-number').value,
+                branch: document.getElementById('branch').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value
+            };
+
+            // Razorpay Options
+            const options = {
+                key: "YOUR_RAZORPAY_KEY_ID", // TODO: Replace with your Razorpay Key ID
+                amount: 5100, // Amount in paise (₹51 = 5100 paise)
+                currency: "INR",
+                name: "DevTalks 2026",
+                description: "Event Registration Fee",
+                image: "https://your-logo-url.com/logo.png", // Optional: Add your logo
+
+                // Prefill user details
+                prefill: {
+                    name: formData.name,
+                    email: formData.email,
+                    contact: formData.phone
+                },
+
+                // Additional notes
+                notes: {
+                    registration_number: formData.registrationNumber,
+                    branch: formData.branch
+                },
+
+                theme: {
+                    color: "#22d3ee"
+                },
+
+                // Handler for successful payment
+                handler: async function (response) {
+                    console.log("Payment Success:", response);
+
+                    // Change button text to saving
+                    paymentBtn.querySelector('.btn-text').textContent = 'SAVING...';
+
+                    try {
+                        // Save to Supabase
+                        await saveRegistration(formData, response.razorpay_payment_id, 'success');
+
+                        // Success notification
+                        alert(`✅ Registration Successful!\n\nPayment ID: ${response.razorpay_payment_id}\n\nWelcome to DevTalks 2026!\n\nA confirmation email will be sent to ${formData.email}`);
+
+                        // Optional: Redirect to success page
+                        // window.location.href = 'success.html';
+
+                        // Or redirect to homepage
+                        window.location.href = 'index.html';
+
+                    } catch (error) {
+                        console.error('Error saving registration:', error);
+                        alert(`⚠️ Payment successful but registration save failed.\n\nPayment ID: ${response.razorpay_payment_id}\n\nPlease contact support with this payment ID.`);
+
+                        // Re-enable button
+                        paymentBtn.disabled = false;
+                        paymentBtn.querySelector('.btn-text').textContent = originalText;
+                    }
+                },
+
+                // Handler for payment modal close
+                modal: {
+                    ondismiss: function () {
+                        console.log("Payment cancelled by user");
+                        // Re-enable button
+                        paymentBtn.disabled = false;
+                        paymentBtn.querySelector('.btn-text').textContent = originalText;
+                    }
+                }
+            };
+
+            // Create Razorpay instance and open payment modal
+            const razorpay = new Razorpay(options);
+
+            razorpay.on('payment.failed', async function (response) {
+                console.error('Payment Failed:', response.error);
+
+                // Optionally save failed payment attempt to Supabase
+                try {
+                    await saveRegistration(formData, response.error.metadata.payment_id || 'failed', 'failed');
+                } catch (error) {
+                    console.error('Error saving failed payment:', error);
+                }
+
+                alert(`❌ Payment Failed!\n\nError: ${response.error.description}\n\nPlease try again.`);
+
+                // Re-enable button
+                paymentBtn.disabled = false;
+                paymentBtn.querySelector('.btn-text').textContent = originalText;
+            });
+
+            razorpay.open();
+        });
+
+        // --- REAL-TIME VALIDATION ---
+        document.getElementById('phone').addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+        });
+
+        // Remove error on input
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('input', function () {
+                const errorId = this.id + '-error';
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) {
+                    errorElement.classList.remove('show');
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
