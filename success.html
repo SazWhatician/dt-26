@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Successful! | DevTalks 2026</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap" rel="stylesheet">
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#010103',
+                        midnight: '#030712',
+                        royal: '#172554',
+                        electric: '#22d3ee',
+                        neonBlue: '#3b82f6',
+                    },
+                    fontFamily: {
+                        sans: ['"Stack Sans Notch"', 'sans-serif'],
+                        mono: ['monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            overflow-x: hidden;
+            margin: 0;
+            background-color: #010103;
+            color: #fff;
+            font-family: "Stack Sans Notch", sans-serif;
+            cursor: none;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* --- CURSOR --- */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #22d3ee;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate3d(-50%, -50%, 0);
+            mix-blend-mode: difference;
+            transition: width 0.3s, height 0.3s;
+        }
+
+        #cursor.hovered {
+            width: 60px;
+            height: 60px;
+            background: rgba(34, 211, 238, 0.1);
+            border-color: transparent;
+        }
+
+        /* --- QUANTUM CANVAS BACKGROUND --- */
+        #quantum-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* --- SUCCESS CHECKMARK ANIMATION --- */
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 3;
+            stroke-miterlimit: 10;
+            stroke: #22d3ee;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 3;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            margin: 0 auto 2rem;
+            box-shadow: inset 0px 0px 0px #22d3ee;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes scale {
+
+            0%,
+            100% {
+                transform: none;
+            }
+
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 60px #22d3ee;
+            }
+        }
+
+        /* --- FADE IN ANIMATION --- */
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- TICKET CARD --- */
+        .ticket-card {
+            background: rgba(3, 7, 18, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.1), inset 0 0 20px rgba(34, 211, 238, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* --- BUTTON --- */
+        .cta-btn {
+            position: relative;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+            border: 2px solid #22d3ee;
+            color: #ffffff;
+            font-family: monospace;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 600;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .cta-btn:hover {
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-electric selection:text-void">
+
+    <div id="cursor"></div>
+    <div id="quantum-canvas"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="relative z-10 min-h-screen flex items-center justify-center px-4 py-24">
+        <div class="w-full max-w-3xl text-center">
+
+            <!-- SUCCESS CHECKMARK -->
+            <svg class="checkmark fade-in" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+            </svg>
+
+            <!-- SUCCESS MESSAGE -->
+            <div class="fade-in" style="animation-delay: 0.3s;">
+                <h1 class="text-5xl md:text-7xl font-bold mb-4"
+                    style="background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; background-clip: text; color: transparent;">
+                    SUCCESS!
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 mb-8">
+                    You're registered for <span class="text-electric font-bold">DevTalks 2026</span>
+                </p>
+            </div>
+
+            <!-- TICKET DETAILS -->
+            <div class="ticket-card rounded-2xl p-8 md:p-10 mb-8 fade-in" style="animation-delay: 0.5s;">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                    <div>
+                        <p class="text-gray-500 text-sm uppercase tracking-widest mb-2 font-mono">Name</p>
+                        <p class="text-white text-lg" id="display-name">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm uppercase tracking-widest mb-2 font-mono">Registration Number
+                        </p>
+                        <p class="text-white text-lg" id="display-reg-number">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm uppercase tracking-widest mb-2 font-mono">Email</p>
+                        <p class="text-white text-lg break-all" id="display-email">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm uppercase tracking-widest mb-2 font-mono">Payment ID</p>
+                        <p class="text-electric text-lg font-mono" id="display-payment-id">--</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-white/10">
+                    <p class="text-gray-400 text-sm">
+                        📧 A confirmation email has been sent to your email address with your ticket details and event
+                        information.
+                    </p>
+                </div>
+            </div>
+
+            <!-- NEXT STEPS -->
+            <div class="fade-in mb-8" style="animation-delay: 0.7s;">
+                <h3 class="text-electric text-sm uppercase tracking-widest mb-4 font-mono">What's Next?</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="border border-white/10 rounded-lg p-4">
+                        <div class="text-2xl mb-2">📅</div>
+                        <p class="text-gray-300">Save the date:<br /><span class="text-white font-bold">January 24-25,
+                                2026</span></p>
+                    </div>
+                    <div class="border border-white/10 rounded-lg p-4">
+                        <div class="text-2xl mb-2">📧</div>
+                        <p class="text-gray-300">Check your email for<br /><span class="text-white font-bold">Event
+                                Details</span></p>
+                    </div>
+                    <div class="border border-white/10 rounded-lg p-4">
+                        <div class="text-2xl mb-2">🎫</div>
+                        <p class="text-gray-300">Bring your ticket<br /><span class="text-white font-bold">ID at the
+                                venue</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA BUTTONS -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in" style="animation-delay: 0.9s;">
+                <button onclick="window.location.href='index.html'" class="cta-btn">
+                    Back to Home
+                </button>
+                <button onclick="window.print()" class="cta-btn"
+                    style="border-color: #3b82f6; background: rgba(59, 130, 246, 0.1);">
+                    Print Ticket
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- CURSOR LOGIC ---
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // --- GET DATA FROM URL PARAMS ---
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById('display-name').textContent = urlParams.get('name') || '--';
+        document.getElementById('display-reg-number').textContent = urlParams.get('regNumber') || '--';
+        document.getElementById('display-email').textContent = urlParams.get('email') || '--';
+        document.getElementById('display-payment-id').textContent = urlParams.get('paymentId') || '--';
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- QUANTUM BACKGROUND ---
+        const canvas = document.getElementById('quantum-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        canvas.appendChild(renderer.domElement);
+
+        const geometry = new THREE.BufferGeometry();
+        const count = 400;
+        const positions = new Float32Array(count * 3);
+
+        for (let i = 0; i < count * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 15;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: 0.03, color: 0x22d3ee, transparent: true, opacity: 0.8
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.15 });
+        const lineGeometry = new THREE.BufferGeometry();
+        const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+        scene.add(lines);
+
+        camera.position.z = 5;
+
+        let targetX = 0, targetY = 0;
+        window.addEventListener('mousemove', (e) => {
+            targetX = e.clientX * 0.001;
+            targetY = e.clientY * 0.001;
+        });
+
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+
+            particles.rotation.y += 0.001;
+            particles.rotation.x += 0.001;
+            lines.rotation.y += 0.001;
+            lines.rotation.x += 0.001;
+
+            particles.rotation.y += 0.05 * (targetX - particles.rotation.y);
+            particles.rotation.x += 0.05 * (targetY - particles.rotation.x);
+
+            const particlePositions = particles.geometry.attributes.position.array;
+            const linePositions = [];
+
+            for (let i = 0; i < count; i += 2) {
+                const x = particlePositions[i * 3];
+                const y = particlePositions[i * 3 + 1];
+                const z = particlePositions[i * 3 + 2];
+
+                if (i + 1 < count) {
+                    const x2 = particlePositions[(i + 1) * 3];
+                    const y2 = particlePositions[(i + 1) * 3 + 1];
+                    const z2 = particlePositions[(i + 1) * 3 + 2];
+
+                    const dist = Math.sqrt((x - x2) ** 2 + (y - y2) ** 2 + (z - z2) ** 2);
+
+                    if (dist < 2.5) {
+                        linePositions.push(x, y, z, x2, y2, z2);
+                    }
+                }
+            }
+
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+            renderer.render(scene, camera);
+        }
+
+        animateThree();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+
+</body>
+
+</html>

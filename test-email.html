@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmailJS Test</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #458500;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #357000;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin-bottom: 20px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📧 EmailJS Test</h1>
+
+        <div class="info">
+            <strong>📝 Instructions:</strong><br>
+            1. Enter your email address below<br>
+            2. Click "Send Test Email"<br>
+            3. Check console (F12) for errors<br>
+            4. Check your email inbox (and spam folder)
+        </div>
+
+        <form id="test-form">
+            <div class="form-group">
+                <label for="test-email">Your Email Address:</label>
+                <input type="email" id="test-email" placeholder="your.email@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="test-name">Your Name:</label>
+                <input type="text" id="test-name" placeholder="John Doe" required>
+            </div>
+
+            <button type="submit" id="send-btn">Send Test Email</button>
+        </form>
+
+        <div id="status" class="status"></div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+            <h3>🔍 Configuration Check:</h3>
+            <p><strong>Public Key:</strong> <code id="check-public-key">Loading...</code></p>
+            <p><strong>Service ID:</strong> <code id="check-service-id">Loading...</code></p>
+            <p><strong>Template ID:</strong> <code id="check-template-id">Loading...</code></p>
+            <p><strong>EmailJS Loaded:</strong> <span id="check-emailjs">Checking...</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Your EmailJS credentials
+        const EMAILJS_PUBLIC_KEY = 'BsYR_VhSPx9hUo7Nu';
+        const EMAILJS_SERVICE_ID = 'service_iol19gn';
+        const EMAILJS_TEMPLATE_ID = 'template_4d1xr1u';
+
+        // Display configuration
+        document.getElementById('check-public-key').textContent = EMAILJS_PUBLIC_KEY;
+        document.getElementById('check-service-id').textContent = EMAILJS_SERVICE_ID;
+        document.getElementById('check-template-id').textContent = EMAILJS_TEMPLATE_ID;
+        document.getElementById('check-emailjs').textContent = typeof emailjs !== 'undefined' ? '✅ Yes' : '❌ No';
+        document.getElementById('check-emailjs').style.color = typeof emailjs !== 'undefined' ? 'green' : 'red';
+
+        // Initialize EmailJS
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+            console.log('✅ EmailJS initialized successfully');
+        } else {
+            console.error('❌ EmailJS library not loaded!');
+        }
+
+        // Handle form submission
+        document.getElementById('test-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const statusDiv = document.getElementById('status');
+            const sendBtn = document.getElementById('send-btn');
+            const email = document.getElementById('test-email').value;
+            const name = document.getElementById('test-name').value;
+
+            // Disable button
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
+            statusDiv.style.display = 'none';
+
+            console.log('🚀 Attempting to send email...');
+            console.log('To:', email);
+            console.log('Name:', name);
+
+            try {
+                const templateParams = {
+                    to_name: name,
+                    to_email: email,
+                    registration_number: 'TEST-' + Date.now(),
+                    branch: 'Computer Science',
+                    phone: '1234567890',
+                    payment_id: 'pay_test_' + Date.now(),
+                    event_name: 'DevTalks 2026',
+                    event_dates: 'January 24-25, 2026',
+                    amount_paid: '₹51'
+                };
+
+                console.log('📤 Template Parameters:', templateParams);
+
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    templateParams
+                );
+
+                console.log('✅ Email sent successfully!', response);
+
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `
+                    <strong>✅ Success!</strong><br>
+                    Email sent to <strong>${email}</strong><br>
+                    Status: ${response.status} - ${response.text}<br>
+                    <small>Check your inbox (and spam folder)</small>
+                `;
+
+            } catch (error) {
+                console.error('❌ Email send failed:', error);
+
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `
+                    <strong>❌ Error!</strong><br>
+                    ${error.text || error.message || 'Unknown error occurred'}<br>
+                    <small>Check browser console (F12) for details</small>
+                `;
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send Test Email';
+            }
+        });
+
+        // Console info
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('📧 EmailJS Test Page Ready');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('Public Key:', EMAILJS_PUBLIC_KEY);
+        console.log('Service ID:', EMAILJS_SERVICE_ID);
+        console.log('Template ID:', EMAILJS_TEMPLATE_ID);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    </script>
+</body>
+
+</html>

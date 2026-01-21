@@ -10,6 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap" rel="stylesheet">
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
 
     <script>
         tailwind.config = {
@@ -236,37 +241,6 @@
             transform: translateY(100%);
         }
 
-        /* --- ANIMATED BACKGROUND PARTICLES --- */
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #22d3ee;
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: float linear infinite;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 0.5;
-            }
-
-            90% {
-                opacity: 0.5;
-            }
-
-            100% {
-                transform: translateY(-100vh) translateX(100px);
-                opacity: 0;
-            }
-        }
-
         /* --- PRICE DISPLAY --- */
         .price-tag {
             background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
@@ -312,12 +286,25 @@
                 transform: translateX(10px);
             }
         }
+
+        /* --- QUANTUM CANVAS BACKGROUND --- */
+        #quantum-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
     </style>
 </head>
 
 <body class="antialiased selection:bg-electric selection:text-void">
 
     <div id="cursor"></div>
+    <div id="quantum-canvas"></div>
 
     <!-- NAVBAR -->
     <nav
@@ -343,9 +330,8 @@
         </div>
     </nav>
 
-    <!-- ANIMATED BACKGROUND -->
-    <div class="absolute inset-0 bg-lux-gradient opacity-60 -z-10"></div>
-    <div id="particles-container" class="fixed inset-0 overflow-hidden pointer-events-none -z-10"></div>
+    <!-- ANIMATED BACKGROUND (Three.js Quantum Particles) -->
+
 
     <!-- MAIN CONTENT -->
     <main class="relative z-10 min-h-screen flex items-center justify-center px-4 py-24">
@@ -447,20 +433,6 @@
             el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
         });
 
-        // --- ANIMATED PARTICLES ---
-        function createParticles() {
-            const container = document.getElementById('particles-container');
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                particle.style.animationDelay = Math.random() * 5 + 's';
-                container.appendChild(particle);
-            }
-        }
-        createParticles();
-
         // --- FORM VALIDATION ---
         function validateForm() {
             let isValid = true;
@@ -526,9 +498,37 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indsd3RwY2FpbnFqbGd1ZXNsYmFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDIyMTcsImV4cCI6MjA4NDU3ODIxN30.aznn-5fbEXI9XmqtaRwSxkfkAT6QL-MNSZHlvONzri8';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // --- SAVE REGISTRATION TO SUPABASE ---
+        // --- SAVE REGISTRATION TO SUPABASE (WITH DUPLICATE PREVENTION) ---
+        let isSaving = false; // Flag to prevent multiple simultaneous saves
+
         async function saveRegistration(formData, paymentId, paymentStatus) {
+            // Prevent duplicate saves
+            if (isSaving) {
+                console.log('Save already in progress, skipping...');
+                return null;
+            }
+
+            isSaving = true;
+
             try {
+                // First, check if this payment ID already exists
+                const { data: existing, error: checkError } = await supabaseClient
+                    .from('registrations')
+                    .select('payment_id')
+                    .eq('payment_id', paymentId)
+                    .maybeSingle();
+
+                if (checkError) {
+                    console.error('Error checking for duplicates:', checkError);
+                }
+
+                if (existing) {
+                    console.log('Payment ID already exists, skipping duplicate save');
+                    isSaving = false;
+                    return existing; // Return existing record instead of creating duplicate
+                }
+
+                // If no duplicate found, proceed with insert
                 const { data, error } = await supabaseClient
                     .from('registrations')
                     .insert([
@@ -551,10 +551,67 @@
                 }
 
                 console.log('Registration saved successfully:', data);
+                isSaving = false;
                 return data;
             } catch (error) {
                 console.error('Error saving registration:', error);
+                isSaving = false;
                 throw error;
+            }
+        }
+
+        // --- EMAILJS CONFIGURATION (FREE EMAIL SENDING) ---
+        const EMAILJS_PUBLIC_KEY = 'BsYR_VhSPx9hUo7Nu';
+        const EMAILJS_SERVICE_ID = 'service_iol19gn';
+        const EMAILJS_TEMPLATE_ID = 'template_4d1xr1u';
+
+        // Initialize EmailJS with error checking
+        (function () {
+            if (typeof emailjs !== 'undefined') {
+                emailjs.init(EMAILJS_PUBLIC_KEY);
+                console.log('✅ EmailJS initialized successfully');
+            } else {
+                console.error('❌ EmailJS library not loaded! Email functionality will not work.');
+            }
+        })();
+
+        // Send confirmation email
+        async function sendConfirmationEmail(formData, paymentId) {
+            console.log('📧 Starting email send process...');
+            console.log('Recipient:', formData.email);
+
+            try {
+                const templateParams = {
+                    to_name: formData.name,
+                    to_email: formData.email,
+                    registration_number: formData.registrationNumber,
+                    branch: formData.branch,
+                    phone: formData.phone,
+                    payment_id: paymentId,
+                    event_name: 'DevTalks 2026',
+                    event_dates: 'January 24-25, 2026',
+                    amount_paid: '₹51'
+                };
+
+                console.log('📤 Template Parameters:', templateParams);
+                console.log('Service ID:', EMAILJS_SERVICE_ID);
+                console.log('Template ID:', EMAILJS_TEMPLATE_ID);
+
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    templateParams
+                );
+
+                console.log('✅ Email sent successfully!', response);
+                console.log('Status:', response.status, response.text);
+                return true;
+            } catch (error) {
+                console.error('❌ Failed to send email:');
+                console.error('Error message:', error.text || error.message);
+                console.error('Full error:', error);
+                // Don't throw error - email failure shouldn't block registration
+                return false;
             }
         }
 
@@ -580,7 +637,13 @@
 
             // Razorpay Options
             const options = {
-                key: "YOUR_RAZORPAY_KEY_ID", // TODO: Replace with your Razorpay Key ID
+                // TEST MODE: Use test key for testing (no real money charged)
+                // For production, replace with your live key from Razorpay Dashboard
+                key: "rzp_test_1DP5mmOlF5G5ag", // Razorpay Test Key
+
+                // Test Cards: 4111 1111 1111 1111 (Success), 4000 0000 0000 0002 (Fail)
+                // CVV: Any 3 digits | Expiry: Any future date
+
                 amount: 5100, // Amount in paise (₹51 = 5100 paise)
                 currency: "INR",
                 name: "DevTalks 2026",
@@ -608,21 +671,35 @@
                 handler: async function (response) {
                     console.log("Payment Success:", response);
 
+                    // Prevent multiple calls by immediately redirecting
+                    if (paymentBtn.dataset.processing === 'true') {
+                        console.log('Already processing, ignoring duplicate callback');
+                        return;
+                    }
+
+                    paymentBtn.dataset.processing = 'true';
+
                     // Change button text to saving
                     paymentBtn.querySelector('.btn-text').textContent = 'SAVING...';
 
                     try {
-                        // Save to Supabase
-                        await saveRegistration(formData, response.razorpay_payment_id, 'success');
+                        // Save to Supabase (with duplicate prevention)
+                        const result = await saveRegistration(formData, response.razorpay_payment_id, 'success');
 
-                        // Success notification
-                        alert(`✅ Registration Successful!\n\nPayment ID: ${response.razorpay_payment_id}\n\nWelcome to DevTalks 2026!\n\nA confirmation email will be sent to ${formData.email}`);
+                        if (result) {
+                            // Send confirmation email (non-blocking)
+                            paymentBtn.querySelector('.btn-text').textContent = 'SENDING EMAIL...';
+                            await sendConfirmationEmail(formData, response.razorpay_payment_id);
 
-                        // Optional: Redirect to success page
-                        // window.location.href = 'success.html';
+                            // Redirect to success page with details
+                            const successUrl = `success.html?` +
+                                `name=${encodeURIComponent(formData.name)}` +
+                                `&regNumber=${encodeURIComponent(formData.registrationNumber)}` +
+                                `&email=${encodeURIComponent(formData.email)}` +
+                                `&paymentId=${encodeURIComponent(response.razorpay_payment_id)}`;
 
-                        // Or redirect to homepage
-                        window.location.href = 'index.html';
+                            window.location.href = successUrl;
+                        }
 
                     } catch (error) {
                         console.error('Error saving registration:', error);
@@ -630,6 +707,7 @@
 
                         // Re-enable button
                         paymentBtn.disabled = false;
+                        paymentBtn.dataset.processing = 'false';
                         paymentBtn.querySelector('.btn-text').textContent = originalText;
                     }
                 },
@@ -682,6 +760,103 @@
                     errorElement.classList.remove('show');
                 }
             });
+        });
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- QUANTUM BACKGROUND (THREE.JS) ---
+        const canvas = document.getElementById('quantum-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        canvas.appendChild(renderer.domElement);
+
+        // Particles
+        const geometry = new THREE.BufferGeometry();
+        const count = 400;
+        const positions = new Float32Array(count * 3);
+        const connections = []; // For lines
+
+        for (let i = 0; i < count * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 15;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: 0.03, color: 0x22d3ee, transparent: true, opacity: 0.8
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        // Lines geometry
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.15 });
+        const lineGeometry = new THREE.BufferGeometry();
+        const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+        scene.add(lines);
+
+        camera.position.z = 5;
+
+        // Interaction
+        let targetX = 0, targetY = 0;
+        window.addEventListener('mousemove', (e) => {
+            targetX = e.clientX * 0.001;
+            targetY = e.clientY * 0.001;
+        });
+
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+
+            // Rotate entire system slowly
+            particles.rotation.y += 0.001;
+            particles.rotation.x += 0.001;
+            lines.rotation.y += 0.001;
+            lines.rotation.x += 0.001;
+
+            // React to mouse
+            particles.rotation.y += 0.05 * (targetX - particles.rotation.y);
+            particles.rotation.x += 0.05 * (targetY - particles.rotation.x);
+
+            // Update Lines (Dynamic connection)
+            const particlePositions = particles.geometry.attributes.position.array;
+            const linePositions = [];
+
+            // Connect close particles (Simplified for performance)
+            for (let i = 0; i < count; i += 2) {
+                const x = particlePositions[i * 3];
+                const y = particlePositions[i * 3 + 1];
+                const z = particlePositions[i * 3 + 2];
+
+                // Check distance with next particle
+                if (i + 1 < count) {
+                    const x2 = particlePositions[(i + 1) * 3];
+                    const y2 = particlePositions[(i + 1) * 3 + 1];
+                    const z2 = particlePositions[(i + 1) * 3 + 2];
+
+                    const dist = Math.sqrt((x - x2) ** 2 + (y - y2) ** 2 + (z - z2) ** 2);
+
+                    if (dist < 2.5) {
+                        linePositions.push(x, y, z, x2, y2, z2);
+                    }
+                }
+            }
+
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+
+            renderer.render(scene, camera);
+        }
+
+        animateThree();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 
