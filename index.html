@@ -27,7 +27,6 @@
                         royal: '#172554',
                         electric: '#22d3ee',
                         neonBlue: '#3b82f6',
-                        glass: 'rgba(255, 255, 255, 0.05)',
                     },
                     fontFamily: {
                         sans: ['"Stack Sans Notch"', 'sans-serif'],
@@ -35,6 +34,7 @@
                     },
                     backgroundImage: {
                         'lux-gradient': 'radial-gradient(circle at center, #172554 0%, #030712 60%, #010103 100%)',
+                        'grid-pattern': 'linear-gradient(to right, rgba(34, 211, 238, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px)',
                     }
                 }
             }
@@ -61,50 +61,21 @@
         }
         #cursor.hovered { width: 60px; height: 60px; background: rgba(34, 211, 238, 0.1); border-color: transparent; }
 
-        /* --- LOADER --- */
-        #loader {
-            position: fixed; inset: 0; background-color: #010103; z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .loader-text {
-            font-size: 10vw; font-weight: 200; color: #22d3ee;
-            font-family: "Stack Sans Notch", sans-serif;
-        }
-        .loader-bar-container {
-            width: 200px; height: 1px; background: rgba(255,255,255,0.1); margin-top: 20px; overflow: hidden;
-        }
-        .loader-bar {
-            width: 0%; height: 100%; background: #22d3ee;
-        }
-
-        /* --- NAVBAR (Transparent) --- */
-        nav { 
-            transition: transform 0.3s ease;
-            background: transparent;
-            box-shadow: none; border: none;
-        }
-        .nav-link { 
-            position: relative; overflow: hidden; height: 24px; cursor: pointer; 
-            font-size: 0.85rem; letter-spacing: 0.15em; font-weight: 500;
-        }
+        /* --- NAVBAR --- */
+        nav { background: transparent; transition: transform 0.3s ease; }
+        .nav-link { position: relative; overflow: hidden; height: 24px; cursor: pointer; font-size: 0.85rem; letter-spacing: 0.15em; font-weight: 500; }
         .nav-link span { display: block; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .nav-link:hover .original { transform: translateY(-100%); }
         .nav-link:hover .hover-clone { transform: translateY(0); }
-        .hover-clone { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            color: #22d3ee; transform: translateY(100%); 
-        }
+        .hover-clone { position: absolute; top: 0; left: 0; width: 100%; height: 100%; color: #22d3ee; transform: translateY(100%); }
 
         /* --- MOBILE MENU --- */
         .mobile-overlay {
             position: fixed; inset: 0; background-color: rgba(1, 1, 3, 0.98); backdrop-filter: blur(10px);
             z-index: 90; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden; /* Hidden by default */
+            opacity: 0; visibility: hidden;
         }
-        .mobile-link {
-            font-size: 2rem; font-weight: 300; margin: 1.5rem 0; cursor: pointer;
-            color: white; transition: color 0.3s;
-        }
+        .mobile-link { font-size: 2rem; font-weight: 300; margin: 1.5rem 0; cursor: pointer; color: white; transition: color 0.3s; }
         .mobile-link:hover { color: #22d3ee; }
 
         /* --- HERO TYPOGRAPHY --- */
@@ -113,71 +84,90 @@
             text-transform: uppercase; font-weight: 700;
             background: linear-gradient(to bottom, #fff, #94a3b8);
             -webkit-background-clip: text; color: transparent;
+            pointer-events: none; 
         }
         .glow-text { text-shadow: 0 0 5px rgba(34, 211, 238, 0.8), 0 0 20px rgba(59, 130, 246, 0.5); }
-        .line-clamp { overflow: hidden; }
+        .reveal-mask { overflow: hidden; position: relative; }
 
-        /* --- DYNAMIC REGISTER BUTTON --- */
-        #magnet-btn-container { position: relative; z-index: 50; display: inline-block; }
+        /* --- BUTTON STYLES --- */
+        #magnet-btn-container { 
+            position: relative; 
+            z-index: 50; /* High Z-index ensures clickable */
+            display: inline-block; 
+            opacity: 0; 
+            cursor: pointer;
+        }
+        
         .insane-btn {
-            position: relative; padding: 1.25rem 3rem; background: rgba(34, 211, 238, 0.05);
-            border: 1px solid rgba(34, 211, 238, 0.5); color: #22d3ee;
-            font-family: monospace; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase;
-            overflow: hidden; cursor: pointer; transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
+            position: relative;
+            background: rgba(1, 1, 3, 0.5); /* Semi transparent background */
+            padding: 1.5rem 4rem;
+            border: 1px solid #22d3ee;
+            color: #22d3ee; 
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+            backdrop-filter: blur(5px);
         }
-        .insane-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 200%; height: 100%;
-            background: #22d3ee; transform: skewX(-20deg);
-            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1); z-index: 0;
-        }
-        .insane-btn:hover::before { transform: translate(50%, 0) skewX(-20deg); }
-        .insane-btn .btn-text { position: relative; z-index: 2; display: inline-block; transition: color 0.3s; }
-        .insane-btn:hover .btn-text { color: #000; font-weight: 900; }
-        .insane-btn:hover { box-shadow: 0 0 40px rgba(34, 211, 238, 0.4); border-color: #22d3ee; }
 
-        /* --- CARD SPLIT FIXES --- */
-        .perspective-container { 
-            perspective: 1200px; transform-style: preserve-3d; 
-            display: flex; flex-direction: row; flex-wrap: nowrap; gap: 0; 
-            justify-content: center; align-items: center;
+        .insane-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #22d3ee;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 0;
         }
-        .card-slice { 
-            transform-style: preserve-3d; z-index: 10; 
-            transform-origin: center center; flex: 1; height: 100%; position: relative;
+
+        .insane-btn:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
         }
+
+        .insane-btn .btn-text {
+            position: relative;
+            z-index: 10;
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
+
+        .insane-btn:hover .btn-text {
+            color: #010103; 
+        }
+
+        .insane-btn:hover {
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.6);
+            border-color: #22d3ee;
+        }
+
+        /* --- CARD 3D --- */
+        .perspective-container { perspective: 1200px; transform-style: preserve-3d; display: flex; justify-content: center; align-items: center; }
+        .card-slice { transform-style: preserve-3d; z-index: 10; transform-origin: center center; flex: 1; height: 100%; position: relative; }
         .face { backface-visibility: hidden; position: absolute; inset: 0; background-repeat: no-repeat; }
-        .face-front { 
-            z-index: 2; transform: rotateY(0deg); background-color: #030712;
-            background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop');
-            background-size: 200% 100%; filter: brightness(0.9) contrast(1.1);
-        }
+        .face-front { z-index: 2; transform: rotateY(0deg); background-color: #030712; background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop'); background-size: 200% 100%; filter: brightness(0.9) contrast(1.1); }
         #card-1 .face-front { background-position: 0% center; }
         #card-2 .face-front { background-position: 100% center; }
         .face-back { transform: rotateY(180deg); background-color: #030712; background-size: cover; background-position: center top; }
-        .speaker-overlay {
-            position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(1, 1, 3, 1) 10%, rgba(3, 7, 18, 0.6) 50%, transparent 100%);
-            display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem;
-        }
+        .speaker-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(1, 1, 3, 1) 10%, rgba(3, 7, 18, 0.6) 50%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem; }
         .glow-box { box-shadow: 0 0 30px rgba(34, 211, 238, 0.15), inset 0 0 20px rgba(34, 211, 238, 0.05); border-color: rgba(34, 211, 238, 0.4); }
 
-        /* --- REACTOR FOOTER --- */
-        footer { position: relative; width: 100%; height: 100vh; background-color: #010103; color: #fff; overflow: hidden; z-index: 1; }
-        .reactor-zone h1 { font-weight: 200; font-size: clamp(3rem, 5vw, 6rem); margin: 0; line-height: 1; }
-        .reactor-zone a { text-decoration: none; color: #fff; display: block; font-size: 1.5rem; transition: all 0.4s ease; cursor: pointer;}
-        .reactor-zone a:hover { color: #22d3ee; transform: translateX(10px); }
+        /* --- FOOTER --- */
+        footer { position: relative; width: 100%; height: 100vh; background-color: #010103; overflow: hidden; z-index: 1; }
         #footer-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        
+        /* --- UTILS --- */
+        .bg-grid { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(34, 211, 238, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px); }
     </style>
 </head>
 <body class="antialiased selection:bg-electric selection:text-void">
-
-    <div id="loader">
-        <div id="loader-counter" class="loader-text">0</div>
-        <div class="loader-bar-container">
-            <div id="loader-progress" class="loader-bar"></div>
-        </div>
-    </div>
 
     <div id="cursor"></div>
 
@@ -185,13 +175,13 @@
         <div class="font-bold text-xl tracking-[0.2em] select-none cursor-pointer z-[101]" onclick="scrollToSection('#hero')">
             DT<span class="text-electric">'26</span>
         </div>
-        
         <div class="hidden md:flex gap-12">
             <div class="nav-link group" onclick="scrollToSection('#hero')"><span class="original">HOME</span><span class="hover-clone">HOME</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#about')"><span class="original">ABOUT</span><span class="hover-clone">ABOUT</span></div>
             <div class="nav-link group" onclick="scrollToSection('#speakers')"><span class="original">SPEAKERS</span><span class="hover-clone">SPEAKERS</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#venue')"><span class="original">VENUE</span><span class="hover-clone">VENUE</span></div>
             <div class="nav-link group" onclick="scrollToSection('#footer')"><span class="original">CONNECT</span><span class="hover-clone">CONNECT</span></div>
         </div>
-        
         <div id="mobile-toggle" class="md:hidden text-electric text-3xl cursor-pointer z-[101] transition-transform duration-300">
             &#9776; 
         </div>
@@ -199,7 +189,9 @@
 
     <div id="mobile-menu-overlay" class="mobile-overlay">
         <div class="mobile-link" data-target="#hero">HOME</div>
+        <div class="mobile-link" data-target="#about">ABOUT</div>
         <div class="mobile-link" data-target="#speakers">SPEAKERS</div>
+        <div class="mobile-link" data-target="#venue">VENUE</div>
         <div class="mobile-link" data-target="#footer">CONNECT</div>
     </div>
 
@@ -208,42 +200,98 @@
         <section class="min-h-screen flex flex-col items-center justify-center relative z-20 pt-20" id="hero">
             <div class="absolute inset-0 bg-lux-gradient opacity-60 -z-10"></div>
             
-            <div class="text-center relative z-20 accelerate px-4">
-                <div class="line-clamp">
+            <div class="text-center relative z-20 accelerate px-4 w-full max-w-[90vw]">
+                <div class="reveal-mask">
                     <h1 class="super-text hero-title">DEV</h1>
                 </div>
-                <div class="line-clamp -mt-2 md:-mt-8">
+                <div class="reveal-mask -mt-2 md:-mt-8">
                     <h1 class="super-text hero-title text-transparent bg-clip-text bg-gradient-to-r from-electric via-white to-electric">TALKS</h1>
                 </div>
-                <div class="line-clamp flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end px-2 md:px-8 -mt-2 md:-mt-6 gap-4 md:gap-0">
-                    <span class="text-xl md:text-3xl text-gray-400 font-mono hero-sub tracking-widest">JAN 24-25</span>
-                    <h1 class="super-text hero-title text-[4rem] md:text-[10rem] !text-stroke leading-none">2026</h1>
-                    <span class="text-xl md:text-3xl text-gray-400 font-mono hero-sub tracking-widest">VSSUT</span>
+                
+                <div class="reveal-mask flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end px-2 md:px-8 -mt-2 md:-mt-6 gap-4 md:gap-0">
+                    <div class="overflow-hidden"><span class="block hero-sub text-xl md:text-3xl text-gray-400 font-mono tracking-widest">JAN 24-25</span></div>
+                    <div class="reveal-mask">
+                        <h1 class="super-text hero-title text-[4rem] md:text-[10rem] !text-stroke leading-none">2026</h1>
+                    </div>
+                    <div class="overflow-hidden"><span class="block hero-sub text-xl md:text-3xl text-gray-400 font-mono tracking-widest">VSSUT</span></div>
                 </div>
             </div>
 
-            <div class="mt-16 md:mt-24" id="magnet-btn-container">
-                <button class="insane-btn accelerate">
+            <div id="countdown" class="flex gap-4 md:gap-8 mt-12 mb-4 font-mono text-electric text-xl md:text-2xl tracking-widest z-30 opacity-0 translate-y-4">
+                <div class="flex flex-col items-center">
+                    <span id="days" class="text-3xl md:text-4xl font-bold">00</span>
+                    <span class="text-[0.6rem] text-gray-500 tracking-[0.2em]">DAYS</span>
+                </div>
+                <span class="text-2xl md:text-3xl animate-pulse">:</span>
+                <div class="flex flex-col items-center">
+                    <span id="hours" class="text-3xl md:text-4xl font-bold">00</span>
+                    <span class="text-[0.6rem] text-gray-500 tracking-[0.2em]">HRS</span>
+                </div>
+                <span class="text-2xl md:text-3xl animate-pulse">:</span>
+                <div class="flex flex-col items-center">
+                    <span id="minutes" class="text-3xl md:text-4xl font-bold">00</span>
+                    <span class="text-[0.6rem] text-gray-500 tracking-[0.2em]">MIN</span>
+                </div>
+                <span class="text-2xl md:text-3xl animate-pulse">:</span>
+                <div class="flex flex-col items-center">
+                    <span id="seconds" class="text-3xl md:text-4xl font-bold">00</span>
+                    <span class="text-[0.6rem] text-gray-500 tracking-[0.2em]">SEC</span>
+                </div>
+            </div>
+            <div class="mt-8 z-50 relative pointer-events-auto" id="magnet-btn-container">
+                <button class="insane-btn accelerate" onclick="scrollToSection('#footer')">
                     <span class="btn-text" data-value="REGISTER NOW">REGISTER NOW</span>
                 </button>
             </div>
             
-            <div class="absolute bottom-10 animate-bounce opacity-50">
+            <div class="absolute bottom-10 animate-bounce opacity-50 pointer-events-none">
                 <div class="w-[1px] h-12 bg-gradient-to-b from-transparent via-electric to-transparent"></div>
             </div>
         </section>
 
+        <section id="about" class="min-h-screen w-full relative flex flex-col justify-center items-center py-20 bg-void border-t border-white/5 bg-grid">
+            <div class="max-w-6xl w-full px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div class="reveal-on-scroll">
+                    <h4 class="text-electric font-mono tracking-widest mb-4">THE SINGULARITY IS HERE</h4>
+                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight uppercase">
+                        Converging <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-electric to-neonBlue">Intelligence</span>
+                    </h2>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                        DevTalks 2026 is more than a conference; it's a nexus for the next generation of developers. We are breaking down the barriers between Quantum Computing, AI Ethics, and Deep Systems Engineering.
+                    </p>
+                    <div class="flex gap-8">
+                        <div>
+                            <div class="text-3xl font-mono text-electric">02</div>
+                            <div class="text-xs text-gray-500 tracking-widest mt-1">DAYS</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-mono text-electric">15+</div>
+                            <div class="text-xs text-gray-500 tracking-widest mt-1">SPEAKERS</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-mono text-electric">500+</div>
+                            <div class="text-xs text-gray-500 tracking-widest mt-1">ATTENDEES</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative h-[400px] md:h-[600px] w-full border border-electric/20 rounded-lg overflow-hidden reveal-on-scroll delay-100 group">
+                    <div class="absolute inset-0 bg-electric/10 group-hover:bg-electric/0 transition-colors duration-500 z-10"></div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110" alt="About Event">
+                    <div class="absolute bottom-4 left-4 font-mono text-xs text-electric z-20">SYSTEM_READY::TRUE</div>
+                    <div class="absolute top-4 right-4 w-2 h-2 bg-electric rounded-full animate-pulse z-20"></div>
+                </div>
+            </div>
+        </section>
+
         <section id="speakers" class="h-screen w-full relative flex flex-col justify-center items-center overflow-hidden z-20 bg-void border-t border-white/5">
-             
             <div class="flex flex-col justify-center items-center gap-8 scale-90 md:scale-100 w-full">
                 <div id="header-text" class="text-center z-20 opacity-0 translate-y-10 px-4">
                     <h2 class="text-4xl md:text-5xl font-light text-white notch-font tracking-[0.2em] uppercase glow-text">
                         Keynote<br><span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-electric to-neonBlue">Speakers</span>
                     </h2>
                 </div>
-
                 <div class="perspective-container relative w-[90vw] h-[45vh] md:w-[800px] md:h-[500px]">
-                    <div class="card-slice" id="card-1">
+                    <div class="card-slice cursor-pointer" id="card-1" onclick="window.location.href='about1.html'">
                         <div class="face face-front border-l border-t border-b border-electric/30"></div>
                         <div class="face face-back border border-electric/50 glow-box" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop');">
                             <div class="speaker-overlay">
@@ -267,28 +315,50 @@
             </div>
         </section>
 
+        <section id="venue" class="min-h-[80vh] w-full relative flex flex-col justify-center items-center py-20 bg-midnight border-t border-white/5">
+            <div class="max-w-6xl w-full px-6 text-center mb-12">
+                <h2 class="text-4xl md:text-6xl font-bold text-white mb-4 uppercase tracking-widest glow-text">The <span class="text-electric">Coordinates</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Join us at the heart of technology.</p>
+            </div>
+            
+            <div class="w-full max-w-5xl h-[400px] md:h-[500px] relative border border-electric/30 rounded-xl overflow-hidden bg-void/50 backdrop-blur-sm group">
+                <div class="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/83.9036,21.4967,14,0/1200x600?access_token=pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2xwbmxnZ2c2MDIzZDJqcDZnY2R3Z2Y4biJ9.J_7f7_7_7_7_7')] bg-cover bg-center opacity-40 grayscale group-hover:grayscale-0 transition-all duration-500"></div>
+                
+                <div class="absolute inset-0 flex flex-col justify-center items-center z-10 pointer-events-none">
+                    <div class="w-4 h-4 bg-electric rounded-full animate-ping mb-2"></div>
+                    <div class="bg-black/80 border border-electric/50 px-6 py-4 rounded text-center backdrop-blur-md">
+                        <h3 class="text-2xl text-white font-bold tracking-wider">VSSUT</h3>
+                        <p class="text-electric font-mono text-sm mt-1">BURLA, ODISHA</p>
+                        <p class="text-gray-500 text-xs mt-2 font-mono">21.4967° N, 83.9036° E</p>
+                    </div>
+                </div>
+                
+                <div class="absolute inset-0 bg-grid opacity-20 pointer-events-none"></div>
+            </div>
+        </section>
+
     </main>
 
-    <footer id="footer" class="reactor-zone">
+    <footer id="footer" class="reactor-zone font-sans">
         <div class="footer-container flex flex-col justify-between p-8 md:p-12 h-full w-full relative z-10">
             <div id="footer-canvas"></div>
             <div class="footer-content flex flex-col justify-between h-full pt-20">
                 <div class="flex flex-col md:flex-row justify-between w-full gap-10 md:gap-0">
                     <div class="flex-1">
-                        <h1 class="glow-text">Connect<br> with<br> Us</h1>
+                        <h1 class="glow-text text-6xl">Connect<br> with<br> Us</h1>
                     </div>
                     <div class="flex-1 flex flex-col md:flex-row gap-8 md:gap-16 justify-start md:justify-end">
                         <div class="text-left md:text-right flex flex-col gap-4">
-                            <h3 class="text-gray-400 uppercase tracking-widest text-sm">Socials</h3>
-                            <a href="#">Instagram</a><a href="#">X</a><a href="#">LinkedIn</a>
+                            <h3 class="text-gray-400 uppercase tracking-widest text-sm text-3xl">Socials</h3>
+                            <a href="#" class="text-2xl">Instagram</a><a href="#" class="text-2xl">X</a><a href="#" class="text-2xl">LinkedIn</a>
                         </div>
                         <div class="text-left md:text-right flex flex-col gap-4">
                             <h3 class="text-gray-400 uppercase tracking-widest text-sm">Menu</h3>
-                            <a onclick="scrollToSection('#hero')">Home</a><a href="#">Contact</a>
+                            <a onclick="scrollToSection('#hero')" class="text-2xl">Home</a><a href="#" class="text-2xl">Contact</a>
                         </div>
                     </div>
                 </div>
-                <div class="text-gray-600 text-sm mt-10 md:mt-0">© 2026 DevTalks VSSUT. All rights reserved.</div>
+                <div class="text-gray-600 text-sm mt-10 md:mt-0">Made with Love by Enigma.</div>
             </div>
         </div>
     </footer>
@@ -314,37 +384,72 @@
             lenis.scrollTo(id, { duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
         }
 
-        // --- 2. LOADER & HERO TRANSITION ---
-        function startLoader() {
-            document.body.style.overflow = 'hidden';
-            lenis.stop();
+        // --- 2. ENTRANCE ANIMATION & COUNTDOWN ---
+        function initHeroEntrance() {
+            window.scrollTo(0, 0);
 
-            const tl = gsap.timeline();
-            const counter = { val: 0 };
-            const loaderCounter = document.getElementById('loader-counter');
-            const loaderProgress = document.getElementById('loader-progress');
+            const tl = gsap.timeline({ delay: 0.2 });
 
-            tl.to(counter, {
-                val: 100, duration: 2, ease: "power2.inOut",
-                onUpdate: () => { loaderCounter.innerText = Math.floor(counter.val); }
+            // Title Reveal
+            tl.from('.hero-title', { 
+                yPercent: 120,
+                duration: 1.5, 
+                stagger: 0.1, 
+                ease: "power4.out" 
             })
-            .to(loaderProgress, { width: "100%", duration: 2, ease: "power2.inOut" }, "<")
-            .to(loaderCounter, { opacity: 0, duration: 0.5 })
-            .to('.loader-bar-container', { opacity: 0, duration: 0.5 }, "<")
-            .to('#loader', {
-                yPercent: -100, duration: 1.2, ease: "expo.inOut",
-                onComplete: () => {
-                    document.body.style.overflow = '';
-                    lenis.start();
-                }
-            })
-            .from('.hero-title', { y: 150, opacity: 0, stagger: 0.1, duration: 1.5, ease: "power4.out" }, "-=0.8")
-            .from('.hero-sub', { opacity: 0, y: 30, duration: 1, stagger: 0.2 }, "-=1")
-            .from('.insane-btn', { scale: 0.8, opacity: 0, duration: 1, ease: "elastic.out(1, 0.5)" }, "-=0.8");
+            // Subtext Reveal
+            .from('.hero-sub', { 
+                yPercent: 100,
+                duration: 1, 
+                stagger: 0.1, 
+                ease: "power3.out" 
+            }, "-=1.2")
+            // Timer Reveal
+            .to('#countdown', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power2.out"
+            }, "-=1.0")
+            // Button Reveal
+            .to('#magnet-btn-container', { 
+                opacity: 1, 
+                duration: 0.01 
+            }, "-=0.8")
+            .from('#magnet-btn-container', { 
+                y: 50,
+                scale: 0.8, 
+                duration: 1.2, 
+                ease: "elastic.out(1, 0.5)" 
+            }, "-=0.8");
         }
-        startLoader();
+        initHeroEntrance();
 
-        // --- 3. MOBILE MENU TOGGLE LOGIC (FIXED) ---
+        // --- COUNTDOWN LOGIC ---
+        function updateTimer() {
+            const targetDate = new Date("Jan 22, 2026 00:00:00").getTime();
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById("countdown").innerHTML = "<div class='text-electric text-2xl font-bold animate-pulse'>SYSTEM ONLINE</div>";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer(); // Initial call
+
+        // --- 3. UI LOGIC (Mobile Menu) ---
         const menuToggle = document.getElementById('mobile-toggle');
         const mobileMenu = document.getElementById('mobile-menu-overlay');
         const mobileLinks = document.querySelectorAll('.mobile-link');
@@ -353,30 +458,24 @@
         menuToggle.addEventListener('click', () => {
             isMenuOpen = !isMenuOpen;
             if(isMenuOpen) {
-                // Open Menu
-                menuToggle.innerHTML = '&times;'; // Change to X
+                menuToggle.innerHTML = '&times;'; 
                 gsap.to(mobileMenu, { autoAlpha: 1, duration: 0.5 });
                 gsap.fromTo(mobileLinks, { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.4 });
             } else {
-                // Close Menu
-                menuToggle.innerHTML = '&#9776;'; // Change to Hamburger
+                menuToggle.innerHTML = '&#9776;';
                 gsap.to(mobileMenu, { autoAlpha: 0, duration: 0.5 });
             }
         });
 
-        // Close menu when a link is clicked
         mobileLinks.forEach(link => {
             link.addEventListener('click', () => {
                 const target = link.dataset.target;
                 scrollToSection(target);
-                
-                // Close interaction
                 isMenuOpen = false;
                 menuToggle.innerHTML = '&#9776;';
                 gsap.to(mobileMenu, { autoAlpha: 0, duration: 0.5 });
             });
         });
-
 
         // --- 4. CURSOR LOGIC ---
         const cursor = document.getElementById('cursor');
@@ -395,7 +494,7 @@
             el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
         });
 
-        // --- 5. MAGNETIC BUTTON ---
+        // --- 5. MAGNETIC BUTTON LOGIC ---
         const btnContainer = document.getElementById('magnet-btn-container');
         const btn = document.querySelector('.insane-btn');
         const btnText = btn.querySelector('.btn-text');
@@ -408,8 +507,9 @@
         });
         btnContainer.addEventListener('mouseleave', () => gsap.to(btn, { x: 0, y: 0, duration: 1, ease: 'elastic.out(1, 0.3)' }));
         
+        // SCRAMBLE EFFECT
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        btn.onmouseover = event => {  
+        btn.onmouseenter = event => {  
             let iteration = 0;
             const originalText = btnText.dataset.value;
             clearInterval(btn.interval);
@@ -423,7 +523,22 @@
             }, 30);
         }
 
-        // --- 6. GUEST REVEAL ANIMATION ---
+        // --- 6. GENERAL SCROLL REVEAL (FOR NEW SECTIONS) ---
+        gsap.utils.toArray('.reveal-on-scroll').forEach(section => {
+            gsap.from(section, {
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        });
+
+        // --- 7. SPEAKERS ANIMATION ---
         function initGuestReveal() {
             gsap.set("#card-1 .face", { borderRadius: "30px 0 0 30px" });
             gsap.set("#card-2 .face", { borderRadius: "0 30px 30px 0" });
@@ -433,7 +548,7 @@
                 scrollTrigger: { 
                     trigger: "#speakers", 
                     start: "top top", 
-                    end: "+=2000", 
+                    end: "+=800", 
                     scrub: 1.5, 
                     pin: true,
                     anticipatePin: 1
@@ -450,7 +565,7 @@
         }
         initGuestReveal();
 
-        // --- 7. REACTOR FOOTER ---
+        // --- 8. REACTOR FOOTER ---
         function initReactor() {
             const container = document.getElementById("footer-canvas");
             const scene = new THREE.Scene();
