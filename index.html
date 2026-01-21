@@ -8,14 +8,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
     <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
-
-    <script type="importmap">
-        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -27,6 +24,7 @@
                         royal: '#172554',
                         electric: '#22d3ee',
                         neonBlue: '#3b82f6',
+                        cyberPink: '#f472b6',
                     },
                     fontFamily: {
                         sans: ['"Stack Sans Notch"', 'sans-serif'],
@@ -44,7 +42,7 @@
     <style>
         body { 
             overflow-x: hidden; margin: 0; background-color: #010103; color: #fff;
-            font-family: "Stack Sans Notch", sans-serif; cursor: none;
+            font-family: "Stack Sans Notch", sans-serif; cursor: default;
             overscroll-behavior: none;
         }
         
@@ -58,8 +56,14 @@
             position: fixed; top: 0; left: 0; width: 20px; height: 20px;
             border: 1px solid #22d3ee; border-radius: 50%; pointer-events: none; z-index: 9999;
             transform: translate3d(-50%, -50%, 0); mix-blend-mode: difference; transition: width 0.3s, height 0.3s;
+            display: none; 
         }
         #cursor.hovered { width: 60px; height: 60px; background: rgba(34, 211, 238, 0.1); border-color: transparent; }
+        
+        @media (min-width: 768px) {
+            #cursor { display: block; }
+            body { cursor: none; }
+        }
 
         /* --- NAVBAR --- */
         nav { background: transparent; transition: transform 0.3s ease; }
@@ -92,15 +96,14 @@
         /* --- BUTTON STYLES --- */
         #magnet-btn-container { 
             position: relative; 
-            z-index: 50; /* High Z-index ensures clickable */
+            z-index: 50;
             display: inline-block; 
-            opacity: 0; 
             cursor: pointer;
         }
         
         .insane-btn {
             position: relative;
-            background: rgba(1, 1, 3, 0.5); /* Semi transparent background */
+            background: rgba(1, 1, 3, 0.5);
             padding: 1.5rem 4rem;
             border: 1px solid #22d3ee;
             color: #22d3ee; 
@@ -115,38 +118,7 @@
             box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
             backdrop-filter: blur(5px);
         }
-
-        .insane-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #22d3ee;
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-            z-index: 0;
-        }
-
-        .insane-btn:hover::before {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-
-        .insane-btn .btn-text {
-            position: relative;
-            z-index: 10;
-            display: inline-block;
-            transition: color 0.3s ease;
-        }
-
-        .insane-btn:hover .btn-text {
-            color: #010103; 
-        }
-
-        .insane-btn:hover {
-            box-shadow: 0 0 40px rgba(34, 211, 238, 0.6);
-            border-color: #22d3ee;
-        }
+        .insane-btn:hover { box-shadow: 0 0 40px rgba(34, 211, 238, 0.6); border-color: #22d3ee; color: #000; background: #22d3ee; }
 
         /* --- CARD 3D --- */
         .perspective-container { perspective: 1200px; transform-style: preserve-3d; display: flex; justify-content: center; align-items: center; }
@@ -159,6 +131,80 @@
         .speaker-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(1, 1, 3, 1) 10%, rgba(3, 7, 18, 0.6) 50%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem; }
         .glow-box { box-shadow: 0 0 30px rgba(34, 211, 238, 0.15), inset 0 0 20px rgba(34, 211, 238, 0.05); border-color: rgba(34, 211, 238, 0.4); }
 
+        /* --- FLIP CARDS (ARCHITECTS) --- */
+        .flip-card-container {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card-container.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+        .flip-card-front {
+            background-color: #030712;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .flip-card-back {
+            background-color: #0a0a0f; /* Slightly lighter void */
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            box-shadow: inset 0 0 50px rgba(34, 211, 238, 0.05);
+            border-color: rgba(34, 211, 238, 0.3);
+        }
+
+        /* --- NEW FLOW SECTION STYLES --- */
+        .glass-panel {
+            background: rgba(10, 10, 15, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timeline-dot {
+            box-shadow: 0 0 10px #22d3ee, 0 0 20px #22d3ee;
+        }
+
+        /* Active state class for scanning effect */
+        .event-active .glass-panel {
+            border-color: #22d3ee;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+            background: rgba(34, 211, 238, 0.05);
+        }
+        
+        /* Sticky Header Logic */
+        .sticky-header {
+            position: sticky;
+            top: 100px; /* Adjust based on navbar height */
+            z-index: 40;
+            padding-bottom: 2rem;
+            pointer-events: none; /* Let clicks pass through to content */
+        }
+        
         /* --- FOOTER --- */
         footer { position: relative; width: 100%; height: 100vh; background-color: #010103; overflow: hidden; z-index: 1; }
         #footer-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
@@ -171,16 +217,19 @@
 
     <div id="cursor"></div>
 
-    <nav class="fixed top-0 left-0 w-full px-6 md:px-12 py-6 z-[100] flex justify-between items-center text-white">
-        <div class="font-bold text-xl tracking-[0.2em] select-none cursor-pointer z-[101]" onclick="scrollToSection('#hero')">
-            DT<span class="text-electric">'26</span>
+    <nav class="fixed top-0 left-0 w-full px-6 md:px-12 py-6 z-[100] flex justify-between items-center text-white bg-void/80 backdrop-blur-md md:bg-transparent md:backdrop-blur-none border-b border-white/5 md:border-none">
+        
+        <div class="cursor-pointer z-[101]" onclick="scrollToSection('#hero')">
+            <img src="WhatsApp Image 2026-01-21 at 7.59.53 PM.jpeg" alt="DevTalk Logo" class="h-10 md:h-12 w-auto rounded-lg shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] transition-all duration-300">
         </div>
+
         <div class="hidden md:flex gap-12">
             <div class="nav-link group" onclick="scrollToSection('#hero')"><span class="original">HOME</span><span class="hover-clone">HOME</span></div>
             <div class="nav-link group" onclick="scrollToSection('#about')"><span class="original">ABOUT</span><span class="hover-clone">ABOUT</span></div>
             <div class="nav-link group" onclick="scrollToSection('#speakers')"><span class="original">SPEAKERS</span><span class="hover-clone">SPEAKERS</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#schedule')"><span class="original">SCHEDULE</span><span class="hover-clone">SCHEDULE</span></div>
             <div class="nav-link group" onclick="scrollToSection('#venue')"><span class="original">VENUE</span><span class="hover-clone">VENUE</span></div>
-            <div class="nav-link group" onclick="scrollToSection('#footer')"><span class="original">CONNECT</span><span class="hover-clone">CONNECT</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#organizers')"><span class="original">ORGANIZERS</span><span class="hover-clone">ORGANIZERS</span></div>
         </div>
         <div id="mobile-toggle" class="md:hidden text-electric text-3xl cursor-pointer z-[101] transition-transform duration-300">
             &#9776; 
@@ -191,7 +240,9 @@
         <div class="mobile-link" data-target="#hero">HOME</div>
         <div class="mobile-link" data-target="#about">ABOUT</div>
         <div class="mobile-link" data-target="#speakers">SPEAKERS</div>
+        <div class="mobile-link" data-target="#schedule">SCHEDULE</div>
         <div class="mobile-link" data-target="#venue">VENUE</div>
+        <div class="mobile-link" data-target="#organizers">ORGANIZERS</div>
         <div class="mobile-link" data-target="#footer">CONNECT</div>
     </div>
 
@@ -205,7 +256,7 @@
                     <h1 class="super-text hero-title">DEV</h1>
                 </div>
                 <div class="reveal-mask -mt-2 md:-mt-8">
-                    <h1 class="super-text hero-title text-transparent bg-clip-text bg-gradient-to-r from-electric via-white to-electric">TALK</h1>
+                    <h1 class="super-text hero-title text-transparent bg-clip-text bg-gradient-to-r from-electric via-white to-electric">TALK </h1>
                 </div>
                 
                 <div class="reveal-mask flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end px-2 md:px-8 -mt-2 md:-mt-6 gap-4 md:gap-0">
@@ -217,7 +268,7 @@
                 </div>
             </div>
 
-            <div id="countdown" class="flex gap-4 md:gap-8 mt-12 mb-4 font-mono text-electric text-xl md:text-2xl tracking-widest z-30 opacity-0 translate-y-4">
+            <div id="countdown" class="flex gap-4 md:gap-8 mt-12 mb-4 font-mono text-electric text-xl md:text-2xl tracking-widest z-30 translate-y-4">
                 <div class="flex flex-col items-center">
                     <span id="days" class="text-3xl md:text-4xl font-bold">00</span>
                     <span class="text-[0.6rem] text-gray-500 tracking-[0.2em]">DAYS</span>
@@ -255,23 +306,21 @@
                 <div class="reveal-on-scroll">
                     <h4 class="text-electric font-mono tracking-widest mb-4">THE SINGULARITY IS HERE</h4>
                     <h2 class="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight uppercase">
-                        Converging <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-electric to-neonBlue">Intelligence</span>
+                        Dev <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-electric to-neonBlue">Talk</span>
                     </h2>
+                    
                     <p class="text-gray-400 text-lg leading-relaxed mb-8">
-                        DevTalks 2026 is more than a conference; it's a nexus for the next generation of developers. We are breaking down the barriers between Quantum Computing, AI Ethics, and Deep Systems Engineering.
+                        DevTalk is a two-day technical event organised by <span class="text-electric">Enigma VSSUT</span> – the official coding club of VSSUT, in collaboration with <span class="text-electric">Google Developer Groups (GDG) VSSUT</span> and <span class="text-electric">AWS Cloud Club VSSUT</span>. The event brings together industry professionals, aspiring developers, and tech enthusiasts to explore modern technologies and hands-on industry practices.
                     </p>
+
                     <div class="flex gap-8">
                         <div>
                             <div class="text-3xl font-mono text-electric">02</div>
                             <div class="text-xs text-gray-500 tracking-widest mt-1">DAYS</div>
                         </div>
                         <div>
-                            <div class="text-3xl font-mono text-electric">15+</div>
+                            <div class="text-3xl font-mono text-electric">02</div>
                             <div class="text-xs text-gray-500 tracking-widest mt-1">SPEAKERS</div>
-                        </div>
-                        <div>
-                            <div class="text-3xl font-mono text-electric">500+</div>
-                            <div class="text-xs text-gray-500 tracking-widest mt-1">ATTENDEES</div>
                         </div>
                     </div>
                 </div>
@@ -279,14 +328,13 @@
                     <div class="absolute inset-0 bg-electric/10 group-hover:bg-electric/0 transition-colors duration-500 z-10"></div>
                     <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110" alt="About Event">
                     <div class="absolute bottom-4 left-4 font-mono text-xs text-electric z-20">SYSTEM_READY::TRUE</div>
-                    <div class="absolute top-4 right-4 w-2 h-2 bg-electric rounded-full animate-pulse z-20"></div>
                 </div>
             </div>
         </section>
 
         <section id="speakers" class="h-screen w-full relative flex flex-col justify-center items-center overflow-hidden z-20 bg-void border-t border-white/5">
             <div class="flex flex-col justify-center items-center gap-8 scale-90 md:scale-100 w-full">
-                <div id="header-text" class="text-center z-20 opacity-0 translate-y-10 px-4">
+                <div id="header-text" class="text-center z-20 translate-y-10 px-4">
                     <h2 class="text-4xl md:text-5xl font-light text-white notch-font tracking-[0.2em] uppercase glow-text">
                         Keynote<br><span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-electric to-neonBlue">Speakers</span>
                     </h2>
@@ -296,9 +344,9 @@
                         <div class="face face-front border-l border-t border-b border-electric/30"></div>
                         <div class="face face-back border border-electric/50 glow-box" style="background-image: url('WhatsApp\ Image\ 2026-01-21\ at\ 7.59.43\ PM.jpeg');">
                             <div class="speaker-overlay">
-                                <h3 class="text-3xl md:text-4xl text-electric mb-2 notch-font font-light uppercase leading-none tracking-widest">Alex<br><strong class="font-bold text-white">Chen</strong></h3>
+                                <h3 class="text-3xl md:text-4xl text-electric mb-2 notch-font font-light uppercase leading-none tracking-widest">Rudra<br>madhaba<br><strong class="font-bold text-white">Mishra</strong></h3>
                                 <div class="h-[1px] w-12 bg-electric mb-2"></div>
-                                <p class="text-xs md:text-sm text-gray-400 uppercase tracking-[0.2em]">Quantum Lead</p>
+                                <p class="text-xs md:text-sm text-gray-400 uppercase tracking-[0.2em]">@Amazon</p>
                             </div>
                         </div>
                     </div>
@@ -307,9 +355,9 @@
                         <div class="face face-front border-r border-t border-b border-electric/30"></div>
                         <div class="face face-back border border-electric/50 glow-box" style="background-image: url('WhatsApp\ Image\ 2026-01-21\ at\ 7.59.44\ PM.jpeg');">
                              <div class="speaker-overlay">
-                                <h3 class="text-3xl md:text-4xl text-electric mb-2 notch-font font-light uppercase leading-none tracking-widest">Maria<br><strong class="font-bold text-white">Rosales</strong></h3>
+                                <h3 class="text-3xl md:text-4xl text-electric mb-2 notch-font font-light uppercase leading-none tracking-widest">Viraj<br><strong class="font-bold text-white">Chandra</strong></h3>
                                 <div class="h-[1px] w-12 bg-electric mb-2"></div>
-                                <p class="text-xs md:text-sm text-gray-400 uppercase tracking-[0.2em]">AI Ethicist</p>
+                                <p class="text-xs md:text-sm text-gray-400 uppercase tracking-[0.2em]">@Google</p>
                             </div>
                         </div>
                     </div>
@@ -317,6 +365,112 @@
             </div>
         </section>
 
+        <section id="schedule" class="relative py-24 bg-void border-t border-white/5">
+             <div class="text-center mb-16 px-4">
+                <h2 class="text-4xl md:text-6xl font-bold text-white uppercase tracking-widest glow-text">
+                    Event <span class="text-electric">Flow</span>
+                </h2>
+                <p class="text-gray-500 font-mono mt-4 tracking-widest text-xs md:text-sm">SYSTEM SYNCHRONIZED</p>
+            </div>
+
+            <div class="relative max-w-5xl mx-auto px-6">
+                <div class="absolute left-[34px] md:left-1/2 top-0 bottom-0 w-[1px] bg-white/10 md:-translate-x-1/2 h-full z-0"></div>
+                
+                <div class="sticky-header flex justify-start md:justify-center mb-8 pl-14 md:pl-0">
+                    <div class="bg-midnight border border-electric/50 text-electric font-bold px-6 py-2 rounded-full z-30 shadow-[0_0_20px_rgba(34,211,238,0.2)] tracking-[0.2em] text-sm md:text-base backdrop-blur-xl">
+                        DAY 01
+                    </div>
+                </div>
+
+                <div class="event-item relative mb-16 w-full flex flex-col md:flex-row items-start md:items-center">
+                    <div class="absolute left-[29px] md:left-1/2 top-6 md:top-1/2 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2 md:-translate-y-1/2 timeline-dot"></div>
+                    
+                    <div class="w-full md:w-1/2 pl-20 md:pl-0 md:pr-16 text-left md:text-right md:order-1">
+                        <div class="glass-panel p-6 rounded-lg relative transition-all duration-300 transform hover:-translate-y-1">
+                            <h3 class="text-xl md:text-2xl font-bold text-white mb-1">Opening Ceremony</h3>
+                            <div class="text-electric font-mono text-xs mb-3 tracking-widest"></div>
+                            <p class="text-gray-400 text-sm">Kickstarting the revolution. Welcome address and introduction to the singularity.</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:block md:w-1/2 md:order-2"></div>
+                </div>
+
+                <div class="event-item relative mb-16 w-full flex flex-col md:flex-row items-start md:items-center">
+                    <div class="absolute left-[29px] md:left-1/2 top-6 md:top-1/2 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2 md:-translate-y-1/2 timeline-dot"></div>
+                    <div class="hidden md:block md:w-1/2 md:order-1"></div>
+                    <div class="w-full md:w-1/2 pl-20 md:pl-16 text-left md:order-2">
+                        <div class="glass-panel p-6 rounded-lg relative transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="inline-block border border-electric/30 text-electric text-[10px] px-2 py-0.5 rounded mb-2 font-mono">WORKSHOP</div>
+                            <h3 class="text-xl md:text-2xl font-bold text-white mb-1">System Architecture</h3>
+                            <h4 class="text-sm md:text-base text-gray-300 font-mono mb-2">Viraj Chandra</h4>
+                            <div class="text-electric font-mono text-xs mb-3 tracking-widest"></div>
+                            <p class="text-gray-400 text-sm">A deep dive into scalable system design and microservices patterns.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sticky-header flex justify-start md:justify-center mb-8 pl-14 md:pl-0 pt-10">
+                    <div class="bg-midnight border border-electric/50 text-electric font-bold px-6 py-2 rounded-full z-30 shadow-[0_0_20px_rgba(34,211,238,0.2)] tracking-[0.2em] text-sm md:text-base backdrop-blur-xl">
+                        DAY 02
+                    </div>
+                </div>
+
+                <div class="event-item relative mb-16 w-full flex flex-col md:flex-row items-start md:items-center">
+                    <div class="absolute left-[29px] md:left-1/2 top-6 md:top-1/2 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2 md:-translate-y-1/2 timeline-dot"></div>
+                    <div class="w-full md:w-1/2 pl-20 md:pl-0 md:pr-16 text-left md:text-right md:order-1">
+                        <div class="glass-panel p-6 rounded-lg relative transition-all duration-300 transform hover:-translate-y-1">
+                             <div class="inline-block border border-electric/30 text-electric text-[10px] px-2 py-0.5 rounded mb-2 font-mono">KEYNOTE</div>
+                            <h3 class="text-xl md:text-2xl font-bold text-white mb-1">Future of Tech</h3>
+                            <h4 class="text-sm md:text-base text-gray-300 font-mono mb-2">Rudramadhaba Mishra</h4>
+                            <div class="text-electric font-mono text-xs mb-3 tracking-widest"></div>
+                            <p class="text-gray-400 text-sm">Exploring emerging horizons in AI and machine learning integration.</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:block md:w-1/2 md:order-2"></div>
+                </div>
+
+                <div class="event-item relative mb-16 w-full flex flex-col md:flex-row items-start md:items-center">
+                    <div class="absolute left-[29px] md:left-1/2 top-6 md:top-1/2 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2 md:-translate-y-1/2 timeline-dot"></div>
+                    <div class="hidden md:block md:w-1/2 md:order-1"></div>
+                    <div class="w-full md:w-1/2 pl-20 md:pl-16 text-left md:order-2">
+                        <div class="glass-panel p-6 rounded-lg relative transition-all duration-300 transform hover:-translate-y-1">
+                             <div class="inline-block border border-neonBlue/30 text-neonBlue text-[10px] px-2 py-0.5 rounded mb-2 font-mono">INTERACTIVE</div>
+                            <h3 class="text-xl md:text-2xl font-bold text-white mb-1">Q&A & Networking</h3>
+                            <h4 class="text-sm md:text-base text-gray-300 font-mono mb-2">Viraj Chandra</h4>
+                            <div class="text-electric font-mono text-xs mb-3 tracking-widest"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-item relative mb-16 w-full flex flex-col md:flex-row items-start md:items-center">
+                    <div class="absolute left-[29px] md:left-1/2 top-6 md:top-1/2 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2 md:-translate-y-1/2 timeline-dot"></div>
+                    <div class="w-full md:w-1/2 pl-20 md:pl-0 md:pr-16 text-left md:text-right md:order-1">
+                        <div class="glass-panel p-6 rounded-lg relative transition-all duration-300 transform hover:-translate-y-1">
+                             <div class="inline-block border border-electric/30 text-electric text-[10px] px-2 py-0.5 rounded mb-2 font-mono">TALK SESSION II</div>
+                            <h3 class="text-xl md:text-2xl font-bold text-white mb-1">Advanced Concepts</h3>
+                            <h4 class="text-sm md:text-base text-gray-300 font-mono mb-2">Rudramadhaba Mishra</h4>
+                            <div class="text-electric font-mono text-xs mb-3 tracking-widest"></div>
+                             <p class="text-gray-400 text-sm">Deep dive into specific technical challenges and solutions.</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:block md:w-1/2 md:order-2"></div>
+                </div>
+
+                <div class="event-item relative mb-16 w-full flex flex-col md:flex-row items-start md:items-center">
+                    <div class="absolute left-[29px] md:left-1/2 top-6 md:top-1/2 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2 md:-translate-y-1/2 timeline-dot"></div>
+                    <div class="hidden md:block md:w-1/2 md:order-1"></div>
+                    <div class="w-full md:w-1/2 pl-20 md:pl-16 text-left md:order-2">
+                        <div class="glass-panel p-6 rounded-lg relative transition-all duration-300 transform hover:-translate-y-1">
+                            <h3 class="text-xl md:text-2xl font-bold text-white mb-1">Closing Ceremony</h3>
+                            <div class="text-electric font-mono text-xs mb-3 tracking-widest"></div>
+                             <p class="text-gray-400 text-sm">Awards, acknowledgments, and final networking.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        
         <section id="venue" class="min-h-[80vh] w-full relative flex flex-col justify-center items-center py-20 bg-midnight border-t border-white/5">
             <div class="max-w-6xl w-full px-6 text-center mb-12">
                 <h2 class="text-4xl md:text-6xl font-bold text-white mb-4 uppercase tracking-widest glow-text">The <span class="text-electric">Coordinates</span></h2>
@@ -324,18 +478,83 @@
             </div>
             
             <div class="w-full max-w-5xl h-[400px] md:h-[500px] relative border border-electric/30 rounded-xl overflow-hidden bg-void/50 backdrop-blur-sm group">
-                <div class="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/83.9036,21.4967,14,0/1200x600?access_token=pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2xwbmxnZ2c2MDIzZDJqcDZnY2R3Z2Y4biJ9.J_7f7_7_7_7_7')] bg-cover bg-center opacity-40 grayscale group-hover:grayscale-0 transition-all duration-500"></div>
+                <div class="absolute inset-0 bg-[url('480788064_1622855898369245_7998499739698298844_n.jpg')] bg-cover bg-center opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500"></div>
                 
                 <div class="absolute inset-0 flex flex-col justify-center items-center z-10 pointer-events-none">
                     <div class="w-4 h-4 bg-electric rounded-full animate-ping mb-2"></div>
                     <div class="bg-black/80 border border-electric/50 px-6 py-4 rounded text-center backdrop-blur-md">
-                        <h3 class="text-2xl text-white font-bold tracking-wider">VSSUT</h3>
-                        <p class="text-electric font-mono text-sm mt-1">BURLA, ODISHA</p>
-                        <p class="text-gray-500 text-xs mt-2 font-mono">21.4967° N, 83.9036° E</p>
+                        <h3 class="text-2xl text-white font-bold tracking-wider">E-Learning Centre</h3>
+                        <p class="text-electric font-mono text-sm mt-1">24-25 JAN</p>
+                        <p class="text-gray-500 text-xs mt-2 font-mono">3 PM ONWARDS</p>
                     </div>
                 </div>
                 
                 <div class="absolute inset-0 bg-grid opacity-20 pointer-events-none"></div>
+            </div>
+        </section>
+
+        <section id="organizers" class="min-h-screen w-full relative flex flex-col justify-center items-center py-20 bg-void border-t border-white/5">
+            <div class="max-w-7xl w-full px-6">
+                <h2 class="text-4xl md:text-6xl font-bold text-white mb-16 text-center uppercase tracking-widest glow-text reveal-on-scroll">
+                    The <span class="text-electric">Architects</span>
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <div class="flip-card-container h-[450px] w-full reveal-on-scroll" onclick="toggleCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front flex flex-col items-center justify-center p-8 border border-white/10 bg-midnight/80">
+                                <img src="Logo_vssut.svg" class="w-32 h-32 object-contain mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" alt="VSSUT Logo">
+                                <h3 class="text-3xl font-bold text-white mb-2">VSSUT</h3>
+                                <p class="text-electric font-mono text-xs tracking-[0.3em]">ALMA MATER</p>
+                                <div class="mt-4 text-gray-500 text-xs font-mono">CLICK TO DECRYPT</div>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3 class="text-xl text-electric font-bold mb-4">VSSUT, Burla</h3>
+                                <p class="text-gray-300 text-sm leading-relaxed text-justify">
+                                    Established in 1956, VSSUT is Odisha’s first engineering college and a leading technical university in India. Known for academic excellence, it offers quality education in engineering, science, and management. Situated near Hirakud Dam, it fosters a strong culture of coding, robotics, and innovation, empowering future-ready engineers.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flip-card-container h-[450px] w-full reveal-on-scroll" onclick="toggleCard(this)" style="transition-delay: 0.1s">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front flex flex-col items-center justify-center p-8 border border-white/10 bg-midnight/80">
+                                 <div class="w-32 h-32 mb-6 rounded-full overflow-hidden border border-electric/30">
+                                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Coding">
+                                 </div>
+                                <h3 class="text-3xl font-bold text-white mb-2">CSE Dept.</h3>
+                                <p class="text-electric font-mono text-xs tracking-[0.3em]">THE CORE</p>
+                                <div class="mt-4 text-gray-500 text-xs font-mono">CLICK TO DECRYPT</div>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3 class="text-xl text-electric font-bold mb-4">CSE Society</h3>
+                                <p class="text-gray-300 text-sm leading-relaxed text-justify">
+                                    A self-funded academic body of the CSE Department, VSSUT. It operates with the objective of promoting technical excellence and collaborative learning. Comprising students from B.Tech, M.Tech, and MCA, the society works with active faculty involvement to ensure academic discipline and meaningful engagement.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flip-card-container h-[450px] w-full reveal-on-scroll" onclick="toggleCard(this)" style="transition-delay: 0.2s">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front flex flex-col items-center justify-center p-8 border border-white/10 bg-midnight/80">
+                                <img src="download.jpg" class="w-32 h-auto mb-6 rounded-lg shadow-[0_0_20px_rgba(34,211,238,0.2)]" alt="Enigma Logo">
+                                <h3 class="text-3xl font-bold text-white mb-2">Enigma</h3>
+                                <p class="text-electric font-mono text-xs tracking-[0.3em]">CODE :: REALITY</p>
+                                <div class="mt-4 text-gray-500 text-xs font-mono">CLICK TO DECRYPT</div>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3 class="text-xl text-electric font-bold mb-4">The Coding Club</h3>
+                                <p class="text-gray-300 text-sm leading-relaxed text-justify">
+                                    The official web and coding club of VSSUT, dedicated to promoting competitive programming, AI/ML, and open-source contributions. Enigma organizes hackathons and workshops to nurture problem-solving skills, serving as a platform for tech enthusiasts to collaborate and showcase talent globally.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </section>
 
@@ -360,193 +579,187 @@
                         </div>
                     </div>
                 </div>
-                <div class="text-gray-600 text-sm mt-10 md:mt-0">Made with Love by Enigma.</div>
+                <div class="text-gray-600 text-sm mt-10 md:mt-0">Made With 💚 by Enigma.</div>
             </div>
         </div>
     </footer>
 
-    <script type="module">
-        import * as THREE from 'three';
-
-        // --- 1. SETUP & SMOOTH SCROLL ---
-        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-
-        const lenis = new Lenis({ 
-            lerp: 0.07, 
-            wheelMultiplier: 0.8, 
-            smoothWheel: true, 
-            syncTouch: true
-        });
-
-        lenis.on('scroll', ScrollTrigger.update);
-        gsap.ticker.add((time) => lenis.raf(time * 1000));
-        gsap.ticker.lagSmoothing(0);
-
-        window.scrollToSection = (id) => {
-            lenis.scrollTo(id, { duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    <script>
+        // Flip Card Logic
+        function toggleCard(element) {
+            element.classList.toggle('flipped');
         }
 
-        // --- 2. ENTRANCE ANIMATION & COUNTDOWN ---
-        function initHeroEntrance() {
-            window.scrollTo(0, 0);
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 0. CONFIG ---
+            gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
+            // --- 1. SMOOTH SCROLL ---
+            const lenis = new Lenis({ 
+                lerp: 0.07, 
+                wheelMultiplier: 0.8, 
+                smoothWheel: true, 
+                syncTouch: true
+            });
+
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => lenis.raf(time * 1000));
+            gsap.ticker.lagSmoothing(0);
+
+            window.scrollToSection = (id) => {
+                lenis.scrollTo(id, { duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+            }
+
+            // --- 2. SET INITIAL STATES ---
+            gsap.set('.hero-title', { yPercent: 120 });
+            gsap.set('.hero-sub', { yPercent: 100 });
+            gsap.set('#countdown', { opacity: 0, y: 20 });
+            gsap.set('#magnet-btn-container', { opacity: 0, scale: 0.8, y: 50 });
+            gsap.set('.reveal-on-scroll', { opacity: 0, y: 50 });
+            gsap.set('#header-text', { opacity: 0, y: 50 });
+            gsap.set('.event-item', { opacity: 0, y: 50 });
+
+            // --- 3. ENTRANCE ANIMATION ---
             const tl = gsap.timeline({ delay: 0.2 });
+            tl.to('.hero-title', { yPercent: 0, duration: 1.5, stagger: 0.1, ease: "power4.out" })
+              .to('.hero-sub', { yPercent: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, "-=1.2")
+              .to('#countdown', { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=1.0")
+              .to('#magnet-btn-container', { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "elastic.out(1, 0.5)" }, "-=0.8");
 
-            // Title Reveal
-            tl.from('.hero-title', { 
-                yPercent: 120,
-                duration: 1.5, 
-                stagger: 0.1, 
-                ease: "power4.out" 
-            })
-            // Subtext Reveal
-            .from('.hero-sub', { 
-                yPercent: 100,
-                duration: 1, 
-                stagger: 0.1, 
-                ease: "power3.out" 
-            }, "-=1.2")
-            // Timer Reveal
-            .to('#countdown', {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                ease: "power2.out"
-            }, "-=1.0")
-            // Button Reveal
-            .to('#magnet-btn-container', { 
-                opacity: 1, 
-                duration: 0.01 
-            }, "-=0.8")
-            .from('#magnet-btn-container', { 
-                y: 50,
-                scale: 0.8, 
-                duration: 1.2, 
-                ease: "elastic.out(1, 0.5)" 
-            }, "-=0.8");
-        }
-        initHeroEntrance();
+            // --- 4. COUNTDOWN ---
+            function updateTimer() {
+                const targetDate = new Date("Jan 24, 2026 09:00:00").getTime();
+                const now = new Date().getTime();
+                const distance = targetDate - now;
 
-        // --- COUNTDOWN LOGIC ---
-        function updateTimer() {
-            const targetDate = new Date("Jan 22, 2026 00:00:00").getTime();
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-
-            if (distance < 0) {
-                document.getElementById("countdown").innerHTML = "<div class='text-electric text-2xl font-bold animate-pulse'>SYSTEM ONLINE</div>";
-                return;
-            }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
-            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
-            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
-            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
-        }
-        setInterval(updateTimer, 1000);
-        updateTimer(); // Initial call
-
-        // --- 3. UI LOGIC (Mobile Menu) ---
-        const menuToggle = document.getElementById('mobile-toggle');
-        const mobileMenu = document.getElementById('mobile-menu-overlay');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-        let isMenuOpen = false;
-
-        menuToggle.addEventListener('click', () => {
-            isMenuOpen = !isMenuOpen;
-            if(isMenuOpen) {
-                menuToggle.innerHTML = '&times;'; 
-                gsap.to(mobileMenu, { autoAlpha: 1, duration: 0.5 });
-                gsap.fromTo(mobileLinks, { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.4 });
-            } else {
-                menuToggle.innerHTML = '&#9776;';
-                gsap.to(mobileMenu, { autoAlpha: 0, duration: 0.5 });
-            }
-        });
-
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                const target = link.dataset.target;
-                scrollToSection(target);
-                isMenuOpen = false;
-                menuToggle.innerHTML = '&#9776;';
-                gsap.to(mobileMenu, { autoAlpha: 0, duration: 0.5 });
-            });
-        });
-
-        // --- 4. CURSOR LOGIC ---
-        const cursor = document.getElementById('cursor');
-        let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
-        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-        function animateCursor() {
-            cursorX += (mouseX - cursorX) * 0.15;
-            cursorY += (mouseY - cursorY) * 0.15;
-            cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
-            requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
-
-        document.querySelectorAll('a, button, .card-slice, .nav-link, .mobile-link, #mobile-toggle').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
-
-        // --- 5. MAGNETIC BUTTON LOGIC ---
-        const btnContainer = document.getElementById('magnet-btn-container');
-        const btn = document.querySelector('.insane-btn');
-        const btnText = btn.querySelector('.btn-text');
-        
-        btnContainer.addEventListener('mousemove', (e) => {
-            const rect = btnContainer.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            gsap.to(btn, { x: x * 0.5, y: y * 0.5, duration: 0.4, ease: 'power3.out', overwrite: true });
-        });
-        btnContainer.addEventListener('mouseleave', () => gsap.to(btn, { x: 0, y: 0, duration: 1, ease: 'elastic.out(1, 0.3)' }));
-        
-        // SCRAMBLE EFFECT
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        btn.onmouseenter = event => {  
-            let iteration = 0;
-            const originalText = btnText.dataset.value;
-            clearInterval(btn.interval);
-            btn.interval = setInterval(() => {
-                btnText.innerText = originalText.split("").map((letter, index) => {
-                    if(index < iteration) return originalText[index];
-                    return letters[Math.floor(Math.random() * letters.length)]
-                }).join("");
-                if(iteration >= originalText.length) clearInterval(btn.interval);
-                iteration += 1/2; 
-            }, 30);
-        }
-
-        // --- 6. GENERAL SCROLL REVEAL (FOR NEW SECTIONS) ---
-        gsap.utils.toArray('.reveal-on-scroll').forEach(section => {
-            gsap.from(section, {
-                opacity: 0,
-                y: 50,
-                duration: 1,
-                ease: 'power2.out',
-                scrollTrigger: {
-                    trigger: section,
-                    start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+                if (distance < 0) {
+                    const el = document.getElementById("countdown");
+                    if(el) el.innerHTML = "<div class='text-electric text-2xl font-bold animate-pulse'>SYSTEM ONLINE</div>";
+                    return;
                 }
-            });
-        });
 
-        // --- 7. SPEAKERS ANIMATION ---
-        function initGuestReveal() {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                const d = document.getElementById("days"); if(d) d.innerText = days < 10 ? "0" + days : days;
+                const h = document.getElementById("hours"); if(h) h.innerText = hours < 10 ? "0" + hours : hours;
+                const m = document.getElementById("minutes"); if(m) m.innerText = minutes < 10 ? "0" + minutes : minutes;
+                const s = document.getElementById("seconds"); if(s) s.innerText = seconds < 10 ? "0" + seconds : seconds;
+            }
+            setInterval(updateTimer, 1000);
+            updateTimer(); 
+
+            // --- 5. MOBILE MENU ---
+            const menuToggle = document.getElementById('mobile-toggle');
+            const mobileMenu = document.getElementById('mobile-menu-overlay');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+            let isMenuOpen = false;
+
+            if(menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    isMenuOpen = !isMenuOpen;
+                    if(isMenuOpen) {
+                        menuToggle.innerHTML = '&times;'; 
+                        gsap.to(mobileMenu, { autoAlpha: 1, duration: 0.5 });
+                        gsap.fromTo(mobileLinks, { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.4 });
+                    } else {
+                        menuToggle.innerHTML = '&#9776;';
+                        gsap.to(mobileMenu, { autoAlpha: 0, duration: 0.5 });
+                    }
+                });
+            }
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const target = link.dataset.target;
+                    scrollToSection(target);
+                    isMenuOpen = false;
+                    if(menuToggle) menuToggle.innerHTML = '&#9776;';
+                    gsap.to(mobileMenu, { autoAlpha: 0, duration: 0.5 });
+                });
+            });
+
+            // --- 6. MAGNETIC BUTTON & CURSOR ---
+            const cursor = document.getElementById('cursor');
+            let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+            window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+            function animateCursor() {
+                cursorX += (mouseX - cursorX) * 0.15;
+                cursorY += (mouseY - cursorY) * 0.15;
+                if(cursor) cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            const btnContainer = document.getElementById('magnet-btn-container');
+            const btn = document.querySelector('.insane-btn');
+            
+            if(btnContainer && btn) {
+                btnContainer.addEventListener('mousemove', (e) => {
+                    const rect = btnContainer.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    gsap.to(btn, { x: x * 0.5, y: y * 0.5, duration: 0.4, ease: 'power3.out', overwrite: true });
+                });
+                btnContainer.addEventListener('mouseleave', () => gsap.to(btn, { x: 0, y: 0, duration: 1, ease: 'elastic.out(1, 0.3)' }));
+                
+                // Add Hover classes for cursor
+                document.querySelectorAll('a, button, .card-slice, .nav-link, .mobile-link, #mobile-toggle, .glass-panel').forEach(el => {
+                    el.addEventListener('mouseenter', () => { if(cursor) cursor.classList.add('hovered'); });
+                    el.addEventListener('mouseleave', () => { if(cursor) cursor.classList.remove('hovered'); });
+                });
+            }
+
+            // --- 7. GENERAL SCROLL REVEAL ---
+            gsap.utils.toArray('.reveal-on-scroll').forEach(section => {
+                gsap.to(section, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: section,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+            });
+
+            // --- 8. NEW EVENT FLOW ANIMATION ---
+            const eventItems = gsap.utils.toArray('.event-item');
+            eventItems.forEach((item, i) => {
+                // Reveal Animation
+                gsap.to(item, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: item,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+
+                // "Scan" Activation Animation
+                ScrollTrigger.create({
+                    trigger: item,
+                    start: "top 60%", 
+                    end: "bottom 40%", 
+                    onEnter: () => item.classList.add('event-active'),
+                    onLeave: () => item.classList.remove('event-active'),
+                    onEnterBack: () => item.classList.add('event-active'),
+                    onLeaveBack: () => item.classList.remove('event-active')
+                });
+            });
+
+            // --- 9. SPEAKERS ---
             gsap.set("#card-1 .face", { borderRadius: "30px 0 0 30px" });
             gsap.set("#card-2 .face", { borderRadius: "0 30px 30px 0" });
-            gsap.set("#header-text", { opacity: 0, y: 50 }); 
 
-            const tl = gsap.timeline({
+            const speakerTl = gsap.timeline({
                 scrollTrigger: { 
                     trigger: "#speakers", 
                     start: "top top", 
@@ -557,78 +770,75 @@
                 }
             });
 
-            tl.to("#header-text", { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" })
+            speakerTl.to("#header-text", { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" })
               .to("#card-1", { xPercent: -55, duration: 2, ease: "expo.inOut" }, "split")
               .to("#card-2", { xPercent: 55, duration: 2, ease: "expo.inOut" }, "split")
               .to(".face", { borderRadius: "30px", duration: 1 }, "split")
               .to(".card-slice", { rotationY: 180, duration: 3, ease: "expo.inOut" }, "split+=0.5")
               .to("#card-1", { xPercent: -3, rotationZ: -1, duration: 2, ease: "power2.inOut" }, "join")
               .to("#card-2", { xPercent: 3, rotationZ: 1, duration: 2, ease: "power2.inOut" }, "join");
-        }
-        initGuestReveal();
 
-        // --- 8. REACTOR FOOTER ---
-        function initReactor() {
+            // --- 10. REACTOR FOOTER ---
             const container = document.getElementById("footer-canvas");
-            const scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x010103, 0.1);
-            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth/container.offsetHeight, 0.1, 1000);
-            camera.position.set(0,0,5); 
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(container.offsetWidth, container.offsetHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            container.appendChild(renderer.domElement);
+            if(container) {
+                const scene = new THREE.Scene();
+                scene.fog = new THREE.FogExp2(0x010103, 0.1);
+                const camera = new THREE.PerspectiveCamera(75, container.offsetWidth/container.offsetHeight, 0.1, 1000);
+                camera.position.set(0,0,5); 
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                renderer.setSize(container.offsetWidth, container.offsetHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                container.appendChild(renderer.domElement);
 
-            const group = new THREE.Group(); scene.add(group);
-            const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1,1), new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true, emissive: 0x22d3ee, emissiveIntensity: 2 })); group.add(core);
-            const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.6,0.02,16,100), new THREE.MeshStandardMaterial({ color:0xffffff, metalness:1, roughness:0.1, emissive:0x172554, emissiveIntensity:0.2 })); group.add(ring1);
-            const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.2,0.05,16,100), new THREE.MeshStandardMaterial({ color:0x000000, metalness:0.9, roughness:0.2, emissive:0x3b82f6, emissiveIntensity:0.5 })); ring2.rotation.x = Math.PI / 2; group.add(ring2);
-            const pGeo = new THREE.BufferGeometry(); const pPos = new Float32Array(800*3);
-            for(let i=0; i<800*3; i++) pPos[i] = (Math.random()-0.5)*12;
-            pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-            const pMesh = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.015, color: 0x22d3ee, transparent: true, opacity: 0.8 })); group.add(pMesh);
+                const group = new THREE.Group(); scene.add(group);
+                const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1,1), new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true, emissive: 0x22d3ee, emissiveIntensity: 2 })); group.add(core);
+                const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.6,0.02,16,100), new THREE.MeshStandardMaterial({ color:0xffffff, metalness:1, roughness:0.1, emissive:0x172554, emissiveIntensity:0.2 })); group.add(ring1);
+                const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.2,0.05,16,100), new THREE.MeshStandardMaterial({ color:0x000000, metalness:0.9, roughness:0.2, emissive:0x3b82f6, emissiveIntensity:0.5 })); ring2.rotation.x = Math.PI / 2; group.add(ring2);
+                const pGeo = new THREE.BufferGeometry(); const pPos = new Float32Array(800*3);
+                for(let i=0; i<800*3; i++) pPos[i] = (Math.random()-0.5)*12;
+                pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+                const pMesh = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.015, color: 0x22d3ee, transparent: true, opacity: 0.8 })); group.add(pMesh);
 
-            let isFooterVisible = false;
-            new IntersectionObserver(e => isFooterVisible = e[0].isIntersecting, {threshold:0.1}).observe(document.querySelector('footer'));
-            const mouse = { x: 0, y: 0 };
-            window.addEventListener("mousemove", (e) => {
-                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-            });
+                let isFooterVisible = false;
+                new IntersectionObserver(e => isFooterVisible = e[0].isIntersecting, {threshold:0.1}).observe(document.querySelector('footer'));
+                const mouse = { x: 0, y: 0 };
+                window.addEventListener("mousemove", (e) => {
+                    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                });
 
-            const fCont = document.querySelector(".footer-container");
-            gsap.set(fCont, { yPercent: -50 });
-            let scrollProgress = 0;
-            ScrollTrigger.create({
-                trigger: "footer", start: "top bottom", end: "bottom bottom", scrub: true,
-                onUpdate: (self) => {
-                    scrollProgress = self.progress;
-                    gsap.set(fCont, { yPercent: -50 * (1 - scrollProgress) });
+                const fCont = document.querySelector(".footer-container");
+                let scrollProgress = 0;
+                ScrollTrigger.create({
+                    trigger: "footer", start: "top bottom", end: "bottom bottom", scrub: true,
+                    onUpdate: (self) => {
+                        scrollProgress = self.progress;
+                        if(fCont) gsap.set(fCont, { yPercent: -50 * (1 - scrollProgress) });
+                    }
+                });
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    if(!isFooterVisible) return;
+                    core.rotation.y+=0.002; core.rotation.x-=0.002;
+                    ring1.rotation.x+=0.01; ring1.rotation.y+=0.005;
+                    ring2.rotation.y-=0.005; pMesh.rotation.y+=0.001;
+                    const time = Date.now() * 0.0015;
+                    const scale = 1 + Math.sin(time) * 0.05;
+                    core.scale.set(scale, scale, scale);
+                    const targetZ = -5 + (scrollProgress * 5);
+                    group.position.z += (targetZ - group.position.z) * 0.05;
+                    group.rotation.x += (mouse.y * 0.2 - group.rotation.x) * 0.05;
+                    group.rotation.y += (mouse.x * 0.2 - group.rotation.y) * 0.05;
+                    renderer.render(scene, camera);
                 }
-            });
-
-            function animate() {
-                requestAnimationFrame(animate);
-                if(!isFooterVisible) return;
-                core.rotation.y+=0.002; core.rotation.x-=0.002;
-                ring1.rotation.x+=0.01; ring1.rotation.y+=0.005;
-                ring2.rotation.y-=0.005; pMesh.rotation.y+=0.001;
-                const time = Date.now() * 0.0015;
-                const scale = 1 + Math.sin(time) * 0.05;
-                core.scale.set(scale, scale, scale);
-                const targetZ = -5 + (scrollProgress * 5);
-                group.position.z += (targetZ - group.position.z) * 0.05;
-                group.rotation.x += (mouse.y * 0.2 - group.rotation.x) * 0.05;
-                group.rotation.y += (mouse.x * 0.2 - group.rotation.y) * 0.05;
-                renderer.render(scene, camera);
+                animate();
+                window.addEventListener("resize", () => {
+                    camera.aspect = container.offsetWidth/container.offsetHeight;
+                    camera.updateProjectionMatrix(); renderer.setSize(container.offsetWidth, container.offsetHeight);
+                });
             }
-            animate();
-            window.addEventListener("resize", () => {
-                camera.aspect = container.offsetWidth/container.offsetHeight;
-                camera.updateProjectionMatrix(); renderer.setSize(container.offsetWidth, container.offsetHeight);
-            });
-        }
-        initReactor();
+        });
     </script>
 </body>
 </html>
