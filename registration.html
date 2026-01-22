@@ -8,7 +8,6 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap" rel="stylesheet">
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
@@ -395,15 +394,23 @@
                 <div class="price-tag mb-8">
                     <p class="text-gray-400 uppercase tracking-widest text-sm mb-2">Registration Fee</p>
                     <div class="price-amount">₹51</div>
-                    <p class="text-gray-500 text-xs mt-2 tracking-wide">Including all taxes</p>
+                    <p class="text-gray-500 text-xs mt-2 tracking-wide">To be paid at the venue</p>
+                </div>
+
+                <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-blue-200 text-center">
+                        <span class="text-xl mr-2">ℹ️</span>
+                        We have switched to <strong>Spot Registration</strong>. Please fill the form below and bring ₹51
+                        cash/UPI to the venue on the event day.
+                    </p>
                 </div>
 
                 <button type="button" id="payment-btn" class="submit-btn">
-                    <span class="btn-text">Proceed to Payment</span>
+                    <span class="btn-text">Confirm Registration</span>
                 </button>
 
                 <p class="text-center text-gray-500 text-xs mt-4 tracking-wide">
-                    Secure payment powered by <span class="text-electric">Razorpay</span>
+                    By clicking confirm, you agree to pay the fee at the venue.
                 </p>
             </div>
 
@@ -615,8 +622,8 @@
             }
         }
 
-        // --- RAZORPAY PAYMENT INTEGRATION WITH SUPABASE ---
-        document.getElementById('payment-btn').addEventListener('click', function () {
+        // --- DIRECT REGISTRATION (NO RAZORPAY) ---
+        document.getElementById('payment-btn').addEventListener('click', async function () {
             if (!validateForm()) {
                 return;
             }
@@ -624,6 +631,9 @@
             // Disable button to prevent double clicks
             const paymentBtn = document.getElementById('payment-btn');
             const originalText = paymentBtn.querySelector('.btn-text').textContent;
+
+            if (paymentBtn.disabled) return;
+
             paymentBtn.disabled = true;
             paymentBtn.querySelector('.btn-text').textContent = 'PROCESSING...';
 
@@ -635,115 +645,41 @@
                 email: document.getElementById('email').value
             };
 
-            // Razorpay Options
-            const options = {
-                // TEST MODE: Use test key for testing (no real money charged)
-                // For production, replace with your live key from Razorpay Dashboard
-                key: "rzp_test_1DP5mmOlF5G5ag", // Razorpay Test Key
+            // Generate a unique Reference ID (replacing Payment ID)
+            const timestamp = Date.now().toString().slice(-6);
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            const referenceId = `DT26-REG-${timestamp}-${random}`;
 
-                // Test Cards: 4111 1111 1111 1111 (Success), 4000 0000 0000 0002 (Fail)
-                // CVV: Any 3 digits | Expiry: Any future date
+            try {
+                // Change button text to saving
+                paymentBtn.querySelector('.btn-text').textContent = 'SAVING...';
 
-                amount: 5100, // Amount in paise (₹51 = 5100 paise)
-                currency: "INR",
-                name: "DevTalks 2026",
-                description: "Event Registration Fee",
-                image: "https://your-logo-url.com/logo.png", // Optional: Add your logo
+                // Save to Supabase (Pending payment status)
+                const result = await saveRegistration(formData, referenceId, 'pending_venue');
 
-                // Prefill user details
-                prefill: {
-                    name: formData.name,
-                    email: formData.email,
-                    contact: formData.phone
-                },
+                if (result) {
+                    // Send confirmation email (non-blocking)
+                    paymentBtn.querySelector('.btn-text').textContent = 'SENDING EMAIL...';
+                    await sendConfirmationEmail(formData, referenceId);
 
-                // Additional notes
-                notes: {
-                    registration_number: formData.registrationNumber,
-                    branch: formData.branch
-                },
+                    // Redirect to success page with details
+                    const successUrl = `success.html?` +
+                        `name=${encodeURIComponent(formData.name)}` +
+                        `&regNumber=${encodeURIComponent(formData.registrationNumber)}` +
+                        `&email=${encodeURIComponent(formData.email)}` +
+                        `&paymentId=${encodeURIComponent(referenceId)}`;
 
-                theme: {
-                    color: "#22d3ee"
-                },
-
-                // Handler for successful payment
-                handler: async function (response) {
-                    console.log("Payment Success:", response);
-
-                    // Prevent multiple calls by immediately redirecting
-                    if (paymentBtn.dataset.processing === 'true') {
-                        console.log('Already processing, ignoring duplicate callback');
-                        return;
-                    }
-
-                    paymentBtn.dataset.processing = 'true';
-
-                    // Change button text to saving
-                    paymentBtn.querySelector('.btn-text').textContent = 'SAVING...';
-
-                    try {
-                        // Save to Supabase (with duplicate prevention)
-                        const result = await saveRegistration(formData, response.razorpay_payment_id, 'success');
-
-                        if (result) {
-                            // Send confirmation email (non-blocking)
-                            paymentBtn.querySelector('.btn-text').textContent = 'SENDING EMAIL...';
-                            await sendConfirmationEmail(formData, response.razorpay_payment_id);
-
-                            // Redirect to success page with details
-                            const successUrl = `success.html?` +
-                                `name=${encodeURIComponent(formData.name)}` +
-                                `&regNumber=${encodeURIComponent(formData.registrationNumber)}` +
-                                `&email=${encodeURIComponent(formData.email)}` +
-                                `&paymentId=${encodeURIComponent(response.razorpay_payment_id)}`;
-
-                            window.location.href = successUrl;
-                        }
-
-                    } catch (error) {
-                        console.error('Error saving registration:', error);
-                        alert(`⚠️ Payment successful but registration save failed.\n\nPayment ID: ${response.razorpay_payment_id}\n\nPlease contact support with this payment ID.`);
-
-                        // Re-enable button
-                        paymentBtn.disabled = false;
-                        paymentBtn.dataset.processing = 'false';
-                        paymentBtn.querySelector('.btn-text').textContent = originalText;
-                    }
-                },
-
-                // Handler for payment modal close
-                modal: {
-                    ondismiss: function () {
-                        console.log("Payment cancelled by user");
-                        // Re-enable button
-                        paymentBtn.disabled = false;
-                        paymentBtn.querySelector('.btn-text').textContent = originalText;
-                    }
-                }
-            };
-
-            // Create Razorpay instance and open payment modal
-            const razorpay = new Razorpay(options);
-
-            razorpay.on('payment.failed', async function (response) {
-                console.error('Payment Failed:', response.error);
-
-                // Optionally save failed payment attempt to Supabase
-                try {
-                    await saveRegistration(formData, response.error.metadata.payment_id || 'failed', 'failed');
-                } catch (error) {
-                    console.error('Error saving failed payment:', error);
+                    window.location.href = successUrl;
                 }
 
-                alert(`❌ Payment Failed!\n\nError: ${response.error.description}\n\nPlease try again.`);
+            } catch (error) {
+                console.error('Error saving registration:', error);
+                alert(`⚠️ Registration failed. Please try again or contact support.`);
 
                 // Re-enable button
                 paymentBtn.disabled = false;
                 paymentBtn.querySelector('.btn-text').textContent = originalText;
-            });
-
-            razorpay.open();
+            }
         });
 
         // --- REAL-TIME VALIDATION ---

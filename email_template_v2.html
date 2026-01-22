@@ -1,0 +1,155 @@
+<div style="
+    font-family: system-ui, sans-serif, Arial;
+    font-size: 14px;
+    color: #333;
+    padding: 14px 8px;
+    background-color: #f5f5f5;
+  ">
+    <div style="max-width: 600px; margin: auto; background-color: #fff">
+        <!-- Header -->
+        <div style="border-top: 6px solid #458500; padding: 16px">
+            <span style="
+          font-size: 20px;
+          font-weight: bold;
+          color: #458500;
+          margin-right: 12px;
+          vertical-align: middle;
+        ">
+                DevTalks '26
+            </span>
+            <span style="
+          font-size: 16px;
+          vertical-align: middle;
+          border-left: 1px solid #333;
+          padding-left: 12px;
+        ">
+                <strong>Registration Confirmed</strong>
+            </span>
+        </div>
+
+        <!-- Body -->
+        <div style="padding: 0 16px">
+            <p>Hello <strong>{{to_name}}</strong>,</p>
+            <p>
+                Thank you for registering for <strong>{{event_name}}</strong>!
+                Your registration has been successfully recorded.
+            </p>
+            <p
+                style="background-color: #fef9c3; color: #854d0e; padding: 10px; border-radius: 4px; border: 1px solid #fde047;">
+                <strong>Note:</strong> Please pay the registration fee of <strong>₹51</strong> at the venue on the event
+                day to complete your check-in.
+            </p>
+
+            <!-- Registration Header -->
+            <div style="
+          text-align: left;
+          font-size: 14px;
+          padding-bottom: 6px;
+          border-bottom: 2px solid #333;
+          margin-top: 16px;
+        ">
+                <strong>Registration Reference # {{payment_id}}</strong>
+            </div>
+
+            <!-- Registration Details -->
+            <table style="width: 100%; border-collapse: collapse; margin-top: 16px">
+                <tr>
+                    <td style="padding: 6px 0; width: 40%">Name</td>
+                    <td style="padding: 6px 0"><strong>{{to_name}}</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px 0">Branch</td>
+                    <td style="padding: 6px 0">{{branch}}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px 0">Phone</td>
+                    <td style="padding: 6px 0">{{phone}}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px 0">Email</td>
+                    <td style="padding: 6px 0">{{to_email}}</td>
+                </tr>
+            </table>
+
+            <!-- Divider -->
+            <div style="padding: 20px 0">
+                <div style="border-top: 2px solid #333"></div>
+            </div>
+
+            <!-- Payment Details (Updated) -->
+            <div style="font-weight: bold; margin-bottom: 8px">Payment Information</div>
+            <table style="width: 100%; border-collapse: collapse">
+                <tr>
+                    <td style="padding: 6px 0; width: 60%">Payment Method</td>
+                    <td style="padding: 6px 0; text-align: right">
+                        Pay at Venue (Cash/UPI)
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px 0">Amount Due</td>
+                    <td style="padding: 6px 0; text-align: right">
+                        <strong>{{amount_paid}}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px 0">Status</td>
+                    <td style="padding: 6px 0; text-align: right; color: #ca8a04">
+                        <strong>PENDING (Pay at Venue)</strong>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Divider -->
+            <div style="padding: 20px 0">
+                <div style="border-top: 2px solid #333"></div>
+            </div>
+
+            <!-- Event Information -->
+            <div style="font-weight: bold; margin-bottom: 8px">Event Information</div>
+            <table style="width: 100%; border-collapse: collapse">
+                <tr>
+                    <td style="padding: 6px 0; width: 40%">Event</td>
+                    <td style="padding: 6px 0">{{event_name}}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px 0">Dates</td>
+                    <td style="padding: 6px 0">{{event_dates}}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px 0">Venue</td>
+                    <td style="padding: 6px 0">E-Learning, VSSUT</td>
+                </tr>
+            </table>
+
+            <!-- Next Steps -->
+            <div style="padding: 20px 0">
+                <div style="border-top: 2px solid #333"></div>
+            </div>
+
+            <p><strong>Next Steps:</strong></p>
+            <ul style="padding-left: 20px; margin-top: 8px">
+                <li>Save this email for your records</li>
+                <li>Bring a valid ID to the venue</li>
+                <li>Bring ₹51 in cash or have UPI ready</li>
+                <li>Join us on {{event_dates}}</li>
+            </ul>
+
+            <p>
+                Need help? Reply to this email or contact us anytime.
+            </p>
+
+            <p>
+                See you at <strong>{{event_name}}</strong>! 🚀<br />
+                <strong>DevTalks Team</strong>
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="max-width: 600px; margin: auto">
+        <p style="color: #999; font-size: 12px; text-align: center; padding: 16px 0">
+            This email was sent to {{to_email}}<br />
+            You received this email because you registered for {{event_name}}.
+        </p>
+    </div>
+</div>
