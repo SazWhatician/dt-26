@@ -308,9 +308,9 @@
     <!-- NAVBAR -->
     <nav
         class="fixed top-0 left-0 w-full px-6 md:px-12 py-6 z-50 flex justify-between items-center text-white bg-transparent">
-        <div class="font-bold text-xl tracking-[0.2em] select-none cursor-pointer z-[101]"
-            onclick="window.location.href='index.html'">
-            DT<span class="text-electric">'26</span>
+        <div class="cursor-pointer z-[101]" onclick="window.location.href='index.html'">
+            <img src="WhatsApp Image 2026-01-21 at 7.59.53 PM.jpeg" alt="DevTalk Logo"
+                class="h-10 md:h-12 w-auto rounded-lg shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] transition-all duration-300">
         </div>
 
         <div class="hidden md:flex gap-12">
@@ -368,6 +368,14 @@
                         <input type="text" id="branch" name="branch" class="form-input w-full"
                             placeholder="Enter your branch" required>
                         <div class="error-msg" id="branch-error">Please enter your branch</div>
+                    </div>
+
+                    <!-- COLLEGE NAME -->
+                    <div>
+                        <label class="form-label">College Name</label>
+                        <input type="text" id="college" name="college" class="form-input w-full"
+                            placeholder="Enter your college name" required>
+                        <div class="error-msg" id="college-error">Please enter your college name</div>
                     </div>
 
                     <!-- PHONE NUMBER -->
@@ -475,6 +483,16 @@
                 branchError.classList.remove('show');
             }
 
+            // College Name validation
+            const college = document.getElementById('college');
+            const collegeError = document.getElementById('college-error');
+            if (!college.value.trim()) {
+                collegeError.classList.add('show');
+                isValid = false;
+            } else {
+                collegeError.classList.remove('show');
+            }
+
             // Phone validation
             const phone = document.getElementById('phone');
             const phoneError = document.getElementById('phone-error');
@@ -543,6 +561,7 @@
                             name: formData.name,
                             registration_number: formData.registrationNumber,
                             branch: formData.branch,
+                            college_name: formData.college,
                             phone: formData.phone,
                             email: formData.email,
                             payment_id: paymentId,
@@ -641,6 +660,7 @@
                 name: document.getElementById('name').value,
                 registrationNumber: document.getElementById('registration-number').value,
                 branch: document.getElementById('branch').value,
+                college: document.getElementById('college').value,
                 phone: document.getElementById('phone').value,
                 email: document.getElementById('email').value
             };

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevTalks 2026 | VSSUT</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap" rel="stylesheet">
 
@@ -40,52 +41,138 @@
     </script>
 
     <style>
-        body { 
-            overflow-x: hidden; margin: 0; background-color: #010103; color: #fff;
-            font-family: "Stack Sans Notch", sans-serif; cursor: default;
+        body {
+            overflow-x: hidden;
+            margin: 0;
+            background-color: #010103;
+            color: #fff;
+            font-family: "Stack Sans Notch", sans-serif;
+            cursor: default;
             overscroll-behavior: none;
             -webkit-tap-highlight-color: transparent;
         }
-        
-        ::-webkit-scrollbar { display: none; }
-        html { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .accelerate { transform: translate3d(0,0,0); will-change: transform; backface-visibility: hidden; }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        html {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .accelerate {
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+            backface-visibility: hidden;
+        }
 
         /* --- CURSOR --- */
         #cursor {
-            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
-            border: 1px solid #22d3ee; border-radius: 50%; pointer-events: none; z-index: 9999;
-            transform: translate3d(-50%, -50%, 0); mix-blend-mode: difference; transition: width 0.3s, height 0.3s;
-            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #22d3ee;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate3d(-50%, -50%, 0);
+            mix-blend-mode: difference;
+            transition: width 0.3s, height 0.3s;
+            display: none;
         }
-        #cursor.hovered { width: 60px; height: 60px; background: rgba(34, 211, 238, 0.1); border-color: transparent; }
-        
+
+        #cursor.hovered {
+            width: 60px;
+            height: 60px;
+            background: rgba(34, 211, 238, 0.1);
+            border-color: transparent;
+        }
+
         @media (min-width: 768px) {
-            #cursor { display: block; }
-            body { cursor: none; }
+            #cursor {
+                display: block;
+            }
+
+            body {
+                cursor: none;
+            }
         }
 
         /* --- NAVBAR --- */
-        nav { background: transparent; transition: transform 0.3s ease; }
-        .nav-link { position: relative; overflow: hidden; height: 24px; cursor: pointer; font-size: 0.85rem; letter-spacing: 0.15em; font-weight: 500; }
-        .nav-link span { display: block; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .nav-link:hover .original { transform: translateY(-100%); }
-        .nav-link:hover .hover-clone { transform: translateY(0); }
-        .hover-clone { position: absolute; top: 0; left: 0; width: 100%; height: 100%; color: #22d3ee; transform: translateY(100%); }
+        nav {
+            background: transparent;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+            height: 24px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            font-weight: 500;
+        }
+
+        .nav-link span {
+            display: block;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-link:hover .original {
+            transform: translateY(-100%);
+        }
+
+        .nav-link:hover .hover-clone {
+            transform: translateY(0);
+        }
+
+        .hover-clone {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #22d3ee;
+            transform: translateY(100%);
+        }
 
         /* --- MOBILE MENU --- */
         .mobile-overlay {
-            position: fixed; inset: 0; background-color: rgba(1, 1, 3, 0.98); 
-            z-index: 90; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(1, 1, 3, 0.98);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
         }
-        .mobile-link { font-size: 2rem; font-weight: 300; margin: 1.5rem 0; cursor: pointer; color: white; transition: color 0.3s; }
-        .mobile-link:hover { color: #22d3ee; }
+
+        .mobile-link {
+            font-size: 2rem;
+            font-weight: 300;
+            margin: 1.5rem 0;
+            cursor: pointer;
+            color: white;
+            transition: color 0.3s;
+        }
+
+        .mobile-link:hover {
+            color: #22d3ee;
+        }
 
         /* --- MOBILE PERFORMANCE OVERRIDES & NAVBAR TRANSPARENCY --- */
         @media (max-width: 768px) {
-            .glass-panel, .backdrop-blur-md, .backdrop-blur-xl {
+
+            .glass-panel,
+            .backdrop-blur-md,
+            .backdrop-blur-xl {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
                 background: rgba(3, 7, 18, 0.95) !important;
@@ -99,36 +186,47 @@
             }
 
             .sticky-header .bg-midnight {
-                background: #030712 !important; 
+                background: #030712 !important;
             }
         }
 
         /* --- HERO TYPOGRAPHY --- */
         .super-text {
-            font-size: clamp(3rem, 12vw, 15rem); line-height: 0.85; letter-spacing: -0.04em;
-            text-transform: uppercase; font-weight: 700;
+            font-size: clamp(3rem, 12vw, 15rem);
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            font-weight: 700;
             background: linear-gradient(to bottom, #fff, #94a3b8);
-            -webkit-background-clip: text; color: transparent;
-            pointer-events: none; 
+            -webkit-background-clip: text;
+            color: transparent;
+            pointer-events: none;
         }
-        .glow-text { text-shadow: 0 0 5px rgba(34, 211, 238, 0.8), 0 0 20px rgba(59, 130, 246, 0.5); }
-        .reveal-mask { overflow: hidden; position: relative; }
+
+        .glow-text {
+            text-shadow: 0 0 5px rgba(34, 211, 238, 0.8), 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .reveal-mask {
+            overflow: hidden;
+            position: relative;
+        }
 
         /* --- BUTTON STYLES --- */
-        #magnet-btn-container { 
-            position: relative; 
+        #magnet-btn-container {
+            position: relative;
             z-index: 50;
-            display: inline-block; 
+            display: inline-block;
             cursor: pointer;
             /* Initially Hidden by GSAP set, revealed only when timer ends */
         }
-        
+
         .insane-btn {
             position: relative;
             background: rgba(1, 1, 3, 0.5);
             padding: 1.5rem 4rem;
             border: 1px solid #22d3ee;
-            color: #22d3ee; 
+            color: #22d3ee;
             font-family: monospace;
             font-size: 1.2rem;
             font-weight: 700;
@@ -139,64 +237,215 @@
             transition: all 0.3s ease;
             box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
         }
-        .insane-btn:hover { box-shadow: 0 0 40px rgba(34, 211, 238, 0.6); border-color: #22d3ee; color: #000; background: #22d3ee; }
+
+        .insane-btn:hover {
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.6);
+            border-color: #22d3ee;
+            color: #000;
+            background: #22d3ee;
+        }
 
         /* --- CARD 3D --- */
-        .perspective-container { perspective: 1200px; transform-style: preserve-3d; display: flex; justify-content: center; align-items: center; }
-        .card-slice { 
-            transform-style: preserve-3d; z-index: 10; transform-origin: center center; flex: 1; height: 100%; position: relative; 
-            cursor: default; 
+        .perspective-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .card-slice.active-card { cursor: pointer; }
 
-        .face { backface-visibility: hidden; position: absolute; inset: 0; background-repeat: no-repeat; }
-        .face-front { z-index: 2; transform: rotateY(0deg); background-color: #030712; background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop'); background-size: 200% 100%; filter: brightness(0.9) contrast(1.1); }
-        #card-1 .face-front { background-position: 0% center; }
-        #card-2 .face-front { background-position: 100% center; }
-        .face-back { transform: rotateY(180deg); background-color: #030712; background-size: cover; background-position: center top; }
-        .speaker-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(1, 1, 3, 1) 10%, rgba(3, 7, 18, 0.6) 50%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem; }
-        .glow-box { box-shadow: 0 0 30px rgba(34, 211, 238, 0.15), inset 0 0 20px rgba(34, 211, 238, 0.05); border-color: rgba(34, 211, 238, 0.4); }
+        .card-slice {
+            transform-style: preserve-3d;
+            z-index: 10;
+            transform-origin: center center;
+            flex: 1;
+            height: 100%;
+            position: relative;
+            cursor: default;
+        }
+
+        .card-slice.active-card {
+            cursor: pointer;
+        }
+
+        .face {
+            backface-visibility: hidden;
+            position: absolute;
+            inset: 0;
+            background-repeat: no-repeat;
+        }
+
+        .face-front {
+            z-index: 2;
+            transform: rotateY(0deg);
+            background-color: #030712;
+            background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop');
+            background-size: 200% 100%;
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        #card-1 .face-front {
+            background-position: 0% center;
+        }
+
+        #card-2 .face-front {
+            background-position: 100% center;
+        }
+
+        .face-back {
+            transform: rotateY(180deg);
+            background-color: #030712;
+            background-size: cover;
+            background-position: center top;
+        }
+
+        .speaker-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(1, 1, 3, 1) 10%, rgba(3, 7, 18, 0.6) 50%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+        }
+
+        .glow-box {
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.15), inset 0 0 20px rgba(34, 211, 238, 0.05);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
 
         /* --- FLIP CARDS --- */
-        .flip-card-container { perspective: 1000px; cursor: pointer; }
-        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
-        .flip-card-container.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
-        .flip-card-front { background-color: #030712; display: flex; align-items: center; justify-content: center; }
-        .flip-card-back { background-color: #0a0a0f; color: white; transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; box-shadow: inset 0 0 50px rgba(34, 211, 238, 0.05); border-color: rgba(34, 211, 238, 0.3); }
+        .flip-card-container {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card-container.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .flip-card-front {
+            background-color: #030712;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flip-card-back {
+            background-color: #0a0a0f;
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            box-shadow: inset 0 0 50px rgba(34, 211, 238, 0.05);
+            border-color: rgba(34, 211, 238, 0.3);
+        }
 
         /* --- SCHEDULE STYLES --- */
-        .glass-panel { background: rgba(10, 10, 15, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
-        .timeline-dot { box-shadow: 0 0 10px #22d3ee, 0 0 20px #22d3ee; }
-        .event-active .glass-panel { border-color: #22d3ee; box-shadow: 0 0 20px rgba(34, 211, 238, 0.2); background: rgba(34, 211, 238, 0.05); }
-        .sticky-header { position: sticky; top: 100px; z-index: 40; padding-bottom: 2rem; pointer-events: none; }
-        
+        .glass-panel {
+            background: rgba(10, 10, 15, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-dot {
+            box-shadow: 0 0 10px #22d3ee, 0 0 20px #22d3ee;
+        }
+
+        .event-active .glass-panel {
+            border-color: #22d3ee;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+            background: rgba(34, 211, 238, 0.05);
+        }
+
+        .sticky-header {
+            position: relative;
+            z-index: 40;
+            padding-bottom: 2rem;
+            pointer-events: none;
+        }
+
         /* --- FOOTER --- */
-        footer { position: relative; width: 100%; height: 100vh; background-color: #010103; overflow: hidden; z-index: 1; }
-        #footer-canvas, #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
-        .bg-grid { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(34, 211, 238, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px); }
+        footer {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background-color: #010103;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        #footer-canvas,
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(34, 211, 238, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+        }
     </style>
 </head>
+
 <body class="antialiased selection:bg-electric selection:text-void">
 
     <div id="cursor"></div>
 
-    <nav class="fixed top-0 left-0 w-full px-6 md:px-12 py-6 z-[100] flex justify-between items-center text-white bg-void/80 backdrop-blur-md md:bg-transparent md:backdrop-blur-none border-b border-white/5 md:border-none">
-        
+    <nav
+        class="fixed top-0 left-0 w-full px-6 md:px-12 py-6 z-[100] flex justify-between items-center text-white bg-void/80 backdrop-blur-md md:bg-transparent md:backdrop-blur-none border-b border-white/5 md:border-none">
+
         <div class="cursor-pointer z-[101]" onclick="scrollToSection('#hero')">
-            <img src="WhatsApp Image 2026-01-21 at 7.59.53 PM.jpeg" alt="DevTalk Logo" class="h-10 md:h-12 w-auto rounded-lg shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] transition-all duration-300">
+            <img src="WhatsApp Image 2026-01-21 at 7.59.53 PM.jpeg" alt="DevTalk Logo"
+                class="h-10 md:h-12 w-auto rounded-lg shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] transition-all duration-300">
         </div>
 
         <div class="hidden md:flex gap-12">
-            <div class="nav-link group" onclick="scrollToSection('#hero')"><span class="original">HOME</span><span class="hover-clone">HOME</span></div>
-            <div class="nav-link group" onclick="scrollToSection('#about')"><span class="original">ABOUT</span><span class="hover-clone">ABOUT</span></div>
-            <div class="nav-link group" onclick="scrollToSection('#speakers')"><span class="original">SPEAKERS</span><span class="hover-clone">SPEAKERS</span></div>
-            <div class="nav-link group" onclick="scrollToSection('#schedule')"><span class="original">SCHEDULE</span><span class="hover-clone">SCHEDULE</span></div>
-            <div class="nav-link group" onclick="scrollToSection('#venue')"><span class="original">VENUE</span><span class="hover-clone">VENUE</span></div>
-            <div class="nav-link group" onclick="scrollToSection('#organizers')"><span class="original">ORGANIZERS</span><span class="hover-clone">ORGANIZERS</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#hero')"><span class="original">HOME</span><span
+                    class="hover-clone">HOME</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#about')"><span class="original">ABOUT</span><span
+                    class="hover-clone">ABOUT</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#speakers')"><span
+                    class="original">SPEAKERS</span><span class="hover-clone">SPEAKERS</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#schedule')"><span
+                    class="original">SCHEDULE</span><span class="hover-clone">SCHEDULE</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#venue')"><span class="original">VENUE</span><span
+                    class="hover-clone">VENUE</span></div>
+            <div class="nav-link group" onclick="scrollToSection('#organizers')"><span
+                    class="original">ORGANIZERS</span><span class="hover-clone">ORGANIZERS</span></div>
         </div>
-        <div id="mobile-toggle" class="md:hidden text-electric text-3xl cursor-pointer z-[101] transition-transform duration-300">
-            &#9776; 
+        <div id="mobile-toggle"
+            class="md:hidden text-electric text-3xl cursor-pointer z-[101] transition-transform duration-300">
+            &#9776;
         </div>
     </nav>
 
@@ -211,28 +460,36 @@
     </div>
 
     <main class="relative z-10 w-full bg-void">
-        
+
         <section class="min-h-screen flex flex-col items-center justify-center relative z-20 pt-20" id="hero">
             <div id="hero-canvas"></div>
-            
+
             <div class="text-center relative z-20 accelerate px-4 w-full max-w-[90vw]">
                 <div class="reveal-mask">
                     <h1 class="super-text hero-title">DEV</h1>
                 </div>
                 <div class="reveal-mask -mt-2 md:-mt-8">
-                    <h1 class="super-text hero-title text-transparent bg-clip-text bg-gradient-to-r from-electric via-white to-electric">TALK </h1>
+                    <h1
+                        class="super-text hero-title text-transparent bg-clip-text bg-gradient-to-r from-electric via-white to-electric">
+                        TALK </h1>
                 </div>
-                
-                <div class="reveal-mask flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end px-2 md:px-8 -mt-2 md:-mt-6 gap-4 md:gap-0">
-                    <div class="overflow-hidden"><span class="block hero-sub text-xl md:text-3xl text-gray-400 font-mono tracking-widest">JAN 24-25</span></div>
+
+                <div
+                    class="reveal-mask flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end px-2 md:px-8 -mt-2 md:-mt-6 gap-4 md:gap-0">
+                    <div class="overflow-hidden"><span
+                            class="block hero-sub text-xl md:text-3xl text-gray-400 font-mono tracking-widest">JAN
+                            24-25</span></div>
                     <div class="reveal-mask">
-                        <h1 class="super-text hero-title text-[4rem] md:text-[10rem] !text-stroke leading-none">2026</h1>
+                        <h1 class="super-text hero-title text-[4rem] md:text-[10rem] !text-stroke leading-none">2026
+                        </h1>
                     </div>
-                    <div class="overflow-hidden"><span class="block hero-sub text-xl md:text-3xl text-gray-400 font-mono tracking-widest">E-Learning</span></div>
+                    <div class="overflow-hidden"><span
+                            class="block hero-sub text-xl md:text-3xl text-gray-400 font-mono tracking-widest">E-Learning</span></div>
                 </div>
             </div>
 
-            <div id="countdown" class="flex gap-4 md:gap-8 mt-12 mb-4 font-mono text-electric text-xl md:text-2xl tracking-widest z-30 translate-y-4">
+            <div id="countdown"
+                class="flex gap-4 md:gap-8 mt-12 mb-4 font-mono text-electric text-xl md:text-2xl tracking-widest z-30 translate-y-4">
                 <div class="flex flex-col items-center">
                     <span id="days" class="text-3xl md:text-4xl font-bold">00</span>
                     <span class="text-[0.6rem] text-gray-500 tracking-[0.2em]">DAYS</span>
@@ -259,27 +516,29 @@
                     <span class="btn-text" data-value="REGISTER NOW">REGISTER NOW</span>
                 </button>
             </div>
-            
+
             <div class="absolute bottom-10 animate-bounce opacity-50 pointer-events-none">
                 <div class="w-[1px] h-12 bg-gradient-to-b from-transparent via-electric to-transparent"></div>
             </div>
         </section>
 
-        <section id="about" class="min-h-[50vh] w-full relative flex flex-col justify-center items-center py-20 bg-void border-t border-white/5 bg-grid">
+        <section id="about"
+            class="min-h-[50vh] w-full relative flex flex-col justify-center items-center py-20 bg-void border-t border-white/5 bg-grid">
             <div class="max-w-4xl w-full px-6 md:px-12 flex flex-col items-center text-center">
                 <div class="reveal-on-scroll">
                     <!-- <h4 class="text-electric font-mono tracking-widest mb-4">THE SINGULARITY IS HERE</h4> -->
                     <h2 class="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight uppercase">
-                        Dev <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-electric to-neonBlue">Talk</span>
+                        Dev <br><span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-electric to-neonBlue">Talk</span>
                     </h2>
-                    
+
                     <p class="text-gray-400 text-lg leading-relaxed mb-8">
                         DevTalk is a two-day technical conference featuring talks
-and workshops, organised by the <span class="text-electric">CSE Society VSSUT</span>
-and <span class="text-electric">Enigma VSSUT</span>. The event brings together industry
-professionals, aspiring developers and technology
-enthusiasts to explore modern technologies and gain hands
-on exposure to industry practices.
+                        and workshops, organised by the <span class="text-electric">CSE Society VSSUT</span>
+                        and <span class="text-electric">Enigma VSSUT</span>. The event brings together industry
+                        professionals, aspiring developers and technology
+                        enthusiasts to explore modern technologies and gain hands
+                        on exposure to industry practices.
                     </p>
 
                     <div class="flex justify-center gap-12">
@@ -296,30 +555,39 @@ on exposure to industry practices.
             </div>
         </section>
 
-        <section id="speakers" class="h-screen w-full relative flex flex-col justify-center items-center overflow-hidden z-20 bg-void border-t border-white/5">
+        <section id="speakers"
+            class="h-screen w-full relative flex flex-col justify-center items-center overflow-hidden z-20 bg-void border-t border-white/5">
             <div class="flex flex-col justify-center items-center gap-8 scale-90 md:scale-100 w-full">
                 <div id="header-text" class="text-center z-20 translate-y-10 px-4">
-                    <h2 class="text-4xl md:text-5xl font-light text-white notch-font tracking-[0.2em] uppercase glow-text">
-                        Meet Our<br><span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-electric to-neonBlue">Experts</span>
+                    <h2
+                        class="text-4xl md:text-5xl font-light text-white notch-font tracking-[0.2em] uppercase glow-text">
+                        Meet Our<br><span
+                            class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-electric to-neonBlue">Experts</span>
                     </h2>
                 </div>
                 <div class="perspective-container relative w-[90vw] h-[45vh] md:w-[800px] md:h-[500px]">
                     <div class="card-slice" id="card-1">
                         <div class="face face-front border-l border-t border-b border-electric/30"></div>
-                        <div class="face face-back border border-electric/50 glow-box" style="background-image: url('WhatsApp\ Image\ 2026-01-21\ at\ 7.59.43\ PM.jpeg');">
+                        <div class="face face-back border border-electric/50 glow-box"
+                            style="background-image: url('WhatsApp\ Image\ 2026-01-21\ at\ 7.59.43\ PM.jpeg');">
                             <div class="speaker-overlay">
-                                <h3 class="text-xl md:text-4xl text-electric mb-2 notch-font font-light uppercase leading-none tracking-widest">Rudra<br>madhaba<br><strong class="font-bold text-white">Mishra</strong></h3>
+                                <h3
+                                    class="text-xl md:text-4xl text-electric mb-2 notch-font font-light uppercase leading-none tracking-widest">
+                                    Rudra<br>madhaba<br><strong class="font-bold text-white">Mishra</strong></h3>
                                 <div class="h-[1px] w-12 bg-electric mb-2"></div>
                                 <p class="text-xs md:text-sm text-gray-400 uppercase tracking-[0.2em]">@Amazon</p>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="card-slice" id="card-2">
                         <div class="face face-front border-r border-t border-b border-electric/30"></div>
-                        <div class="face face-back border border-electric/50 glow-box" style="background-image: url('WhatsApp\ Image\ 2026-01-21\ at\ 7.59.44\ PM.jpeg');">
-                             <div class="speaker-overlay">
-                                <h3 class="text-xl md:text-4xl text-electric mb-2 notch-font font-light uppercase leading-none tracking-widest">Viraj<br><strong class="font-bold text-white">Chandra</strong></h3>
+                        <div class="face face-back border border-electric/50 glow-box"
+                            style="background-image: url('WhatsApp\ Image\ 2026-01-21\ at\ 7.59.44\ PM.jpeg');">
+                            <div class="speaker-overlay">
+                                <h3
+                                    class="text-xl md:text-4xl text-electric mb-2 notch-font font-light uppercase leading-none tracking-widest">
+                                    Viraj<br><strong class="font-bold text-white">Chandra</strong></h3>
                                 <div class="h-[1px] w-12 bg-electric mb-2"></div>
                                 <p class="text-xs md:text-sm text-gray-400 uppercase tracking-[0.2em]">@Google</p>
                             </div>
@@ -335,17 +603,20 @@ on exposure to industry practices.
                     Event <span class="text-electric">Timeline</span>
                 </h2>
             </div>
-        
+
             <div class="relative max-w-5xl mx-auto px-6">
-                <div class="absolute left-[34px] md:left-1/2 top-0 bottom-0 w-[1px] bg-white/10 md:-translate-x-1/2 h-full z-0"></div>
-        
+                <div
+                    class="absolute left-[34px] md:left-1/2 top-0 bottom-0 w-[1px] bg-white/10 md:-translate-x-1/2 h-full z-0">
+                </div>
+
                 <!-- DAY 01 -->
                 <div class="sticky-header flex justify-start md:justify-center mb-8 pl-14 md:pl-0">
-                    <div class="bg-midnight border border-electric/50 text-electric font-bold px-6 py-2 rounded-full z-30 tracking-[0.2em] text-sm md:text-base backdrop-blur-xl">
+                    <div
+                        class="bg-midnight border border-electric/50 text-electric font-bold px-6 py-2 rounded-full z-30 tracking-[0.2em] text-sm md:text-base backdrop-blur-xl">
                         DAY 01 · 24/01
                     </div>
                 </div>
-        
+
                 <!-- Registration
                 <div class="event-item relative mb-16 flex">
                     <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
@@ -356,161 +627,208 @@ on exposure to industry practices.
                         </div>
                     </div>
                 </div> -->
-        
+
                 <!-- Opening Ceremony -->
                 <div class="event-item relative mb-16 flex">
-                    <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
                     <div class="w-full md:w-1/2 pl-20 md:pr-16 md:text-right">
                         <div class="glass-panel p-6 rounded-lg">
                             <h3 class="text-xl font-bold text-white">Opening Ceremony</h3>
-                            <p class="text-electric text-sm font-mono mt-1">04:00 PM – 04:15 PM</p>
+                            <p class="text-electric text-sm font-mono mt-1">03:30 PM – 04:00 PM</p>
                             <p class="text-gray-400 text-sm mt-2">Welcome address and event overview.</p>
                         </div>
                     </div>
                 </div>
-        
+
                 <!-- Break -->
                 <div class="event-item relative mb-16 flex">
-                    <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
                     <div class="hidden md:block md:w-1/2"></div>
                     <div class="w-full md:w-1/2 pl-20 md:pl-16">
                         <div class="glass-panel p-6 rounded-lg">
                             <h3 class="text-xl font-bold text-white">Break</h3>
+                            <p class="text-electric text-sm font-mono mt-1">04:00 PM – 04:15 PM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workshop Viraj -->
+                <div class="event-item relative mb-16 flex">
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
+                    <div class="w-full md:w-1/2 pl-20 md:pr-16 md:text-right">
+                        <div class="glass-panel p-6 rounded-lg">
+                            <div
+                                class="inline-block border border-electric/30 text-electric text-xs px-2 py-0.5 rounded mb-2 font-mono">
+                                WORKSHOP</div>
+                            <h3 class="text-xl font-bold text-white">Workshop by Viraj Chandra</h3>
                             <p class="text-electric text-sm font-mono mt-1">04:15 PM – 06:15 PM</p>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Workshop Viraj -->
-                <div class="event-item relative mb-16 flex">
-                    <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
-                    <div class="w-full md:w-1/2 pl-20 md:pr-16 md:text-right">
-                        <div class="glass-panel p-6 rounded-lg">
-                            <div class="inline-block border border-electric/30 text-electric text-xs px-2 py-0.5 rounded mb-2 font-mono">WORKSHOP</div>
-                            <h3 class="text-xl font-bold text-white">Workshop by Viraj Chandra</h3>
-                            <p class="text-electric text-sm font-mono mt-1">08:00 AM – 09:00 AM</p>
-                        </div>
-                    </div>
-                </div>
-                
+
                 <!-- DAY 02 -->
                 <div class="sticky-header flex justify-start md:justify-center mb-8 pl-14 md:pl-0 pt-10">
-                    <div class="bg-midnight border border-electric/50 text-electric font-bold px-6 py-2 rounded-full z-30 tracking-[0.2em] text-sm md:text-base backdrop-blur-xl">
+                    <div
+                        class="bg-midnight border border-electric/50 text-electric font-bold px-6 py-2 rounded-full z-30 tracking-[0.2em] text-sm md:text-base backdrop-blur-xl">
                         DAY 02 · 25/01
                     </div>
                 </div>
-        
-        
+
+
                 <!-- Talk Viraj -->
                 <div class="event-item relative mb-16 flex">
-                    <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
                     <div class="hidden md:block md:w-1/2"></div>
                     <div class="w-full md:w-1/2 pl-20 md:pl-16">
                         <div class="glass-panel p-6 rounded-lg">
                             <h3 class="text-xl font-bold text-white">Talk by Viraj Chandra</h3>
-                            <p class="text-electric text-sm font-mono mt-1">09:00 AM – 10:00 AM</p>
+                            <p class="text-electric text-sm font-mono mt-1">08:00 AM – 09:00 AM</p>
                         </div>
                     </div>
                 </div>
-        
+
                 <!-- Q&A Viraj -->
                 <div class="event-item relative mb-16 flex">
-                    <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
                     <div class="w-full md:w-1/2 pl-20 md:pr-16 md:text-right">
                         <div class="glass-panel p-6 rounded-lg">
                             <h3 class="text-xl font-bold text-white">Q&A & Networking</h3>
                             <p class="text-gray-300 text-sm">Viraj Chandra</p>
-                            <p class="text-electric text-sm font-mono mt-1">10:00 AM – 10:30 AM</p>
+                            <p class="text-electric text-sm font-mono mt-1">9:00 AM – 10:00 AM</p>
                         </div>
                     </div>
                 </div>
-        
+
                 <!-- Break -->
                 <div class="event-item relative mb-16 flex">
-                    <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
                     <div class="hidden md:block md:w-1/2"></div>
                     <div class="w-full md:w-1/2 pl-20 md:pl-16">
                         <div class="glass-panel p-6 rounded-lg">
                             <h3 class="text-xl font-bold text-white">Break</h3>
+                            <p class="text-electric text-sm font-mono mt-1">10:00 AM – 10:30 AM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Talk Rudramadhaba -->
+                <div class="event-item relative mb-16 flex">
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
+                    <div class="w-full md:w-1/2 pl-20 md:pr-16 md:text-right">
+                        <div class="glass-panel p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-white">Talk by Rudramadhaba Mishra</h3>
+                            <!-- <p class="text-gray-300 text-sm">Talk by Rudramadhaba Mishra</p> -->
                             <p class="text-electric text-sm font-mono mt-1">10:30 AM – 12:00 PM</p>
                         </div>
                     </div>
                 </div>
-        
-                <!-- Talk Rudramadhaba -->
+
                 <div class="event-item relative mb-16 flex">
-                    <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
-                    <div class="w-full md:w-1/2 pl-20 md:pr-16 md:text-right">
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
+                    <div class="hidden md:block md:w-1/2"></div>
+                    <div class="w-full md:w-1/2 pl-20 md:pl-16">
                         <div class="glass-panel p-6 rounded-lg">
-                            <h3 class="text-xl font-bold text-white">Talk & Q&A</h3>
+                            <h3 class="text-xl font-bold text-white">Q&A & Networking</h3>
                             <p class="text-gray-300 text-sm">Rudramadhaba Mishra</p>
                             <p class="text-electric text-sm font-mono mt-1">12:00 PM – 12:30 PM</p>
                         </div>
                     </div>
                 </div>
-        
+
                 <!-- Workshop Rudramadhaba -->
                 <div class="event-item relative mb-16 flex">
-                    <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
-                    <div class="hidden md:block md:w-1/2"></div>
-                    <div class="w-full md:w-1/2 pl-20 md:pl-16">
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
+                    <div class="w-full md:w-1/2 pl-20 md:pr-16 md:text-right">
                         <div class="glass-panel p-6 rounded-lg">
-                            <div class="inline-block border border-electric/30 text-electric text-xs px-2 py-0.5 rounded mb-2 font-mono">WORKSHOP</div>
+                            <div
+                                class="inline-block border border-electric/30 text-electric text-xs px-2 py-0.5 rounded mb-2 font-mono">
+                                WORKSHOP</div>
                             <h3 class="text-xl font-bold text-white">Workshop by Rudramadhaba Mishra</h3>
                             <p class="text-electric text-sm font-mono mt-1">02:00 PM – 04:00 PM</p>
                         </div>
                     </div>
                 </div>
-        
+
                 <!-- Closing -->
-                <div class="event-item relative mb-8 flex">
-                    <div class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2"></div>
-                    <div class="w-full md:w-1/2 pl-20 md:pr-16 md:text-right">
+                <div class="event-item relative mb-16 flex">
+                    <div
+                        class="absolute left-[29px] md:left-1/2 top-6 w-[11px] h-[11px] bg-void border-2 border-electric rounded-full z-10 md:-translate-x-1/2">
+                    </div>
+                    <div class="hidden md:block md:w-1/2"></div>
+                    <div class="w-full md:w-1/2 pl-20 md:pl-16">
                         <div class="glass-panel p-6 rounded-lg">
                             <h3 class="text-xl font-bold text-white">Closing Ceremony</h3>
                             <p class="text-electric text-sm font-mono mt-1">04:00 PM – 04:30 PM</p>
                         </div>
                     </div>
                 </div>
-        
+
             </div>
         </section>
-        
-        
-        <section id="venue" class="min-h-[80vh] w-full relative flex flex-col justify-center items-center py-20 bg-midnight border-t border-white/5">
+
+
+        <section id="venue"
+            class="min-h-[80vh] w-full relative flex flex-col justify-center items-center py-20 bg-midnight border-t border-white/5">
             <div class="max-w-6xl w-full px-6 text-center mb-12">
-                <h2 class="text-4xl md:text-6xl font-bold text-white mb-4 uppercase tracking-widest glow-text">The <span class="text-electric">Venue</span></h2>
+                <h2 class="text-4xl md:text-6xl font-bold text-white mb-4 uppercase tracking-widest glow-text">The <span
+                        class="text-electric">Venue</span></h2>
                 <!-- <p class="text-gray-400 max-w-2xl mx-auto">Join us at the heart of technology.</p> -->
             </div>
-            
-            <div class="w-full max-w-5xl h-[400px] md:h-[500px] relative border border-electric/30 rounded-xl overflow-hidden bg-void/50 backdrop-blur-sm group">
-                <div class="absolute inset-0 bg-[url('480788064_1622855898369245_7998499739698298844_n.jpg')] bg-cover bg-center opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500"></div>
-                
+
+            <div
+                class="w-full max-w-5xl h-[400px] md:h-[500px] relative border border-electric/30 rounded-xl overflow-hidden bg-void/50 backdrop-blur-sm group">
+                <div
+                    class="absolute inset-0 bg-[url('480788064_1622855898369245_7998499739698298844_n.jpg')] bg-cover bg-center opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500">
+                </div>
+
                 <div class="absolute inset-0 flex flex-col justify-center items-center z-10 pointer-events-none">
                     <div class="w-4 h-4 bg-electric rounded-full animate-ping mb-2"></div>
                     <div class="bg-black/80 border border-electric/50 px-6 py-4 rounded text-center backdrop-blur-md">
                         <h3 class="text-2xl text-white font-bold tracking-wider">E-Learning Centre</h3>
                         <p class="text-electric font-mono text-sm mt-1">24-25 JAN</p>
-                        <p class="text-gray-500 text-xs mt-2 font-mono">3 PM ONWARDS</p>
+                        <!-- <p class="text-gray-500 text-xs mt-2 font-mono">3 PM ONWARDS</p> -->
                     </div>
                 </div>
-                
+
                 <div class="absolute inset-0 bg-grid opacity-20 pointer-events-none"></div>
             </div>
         </section>
 
-        <section id="organizers" class="min-h-screen w-full relative flex flex-col justify-center items-center py-20 bg-void border-t border-white/5">
+        <section id="organizers"
+            class="min-h-screen w-full relative flex flex-col justify-center items-center py-20 bg-void border-t border-white/5">
             <div class="max-w-7xl w-full px-6">
-                <h2 class="text-4xl md:text-6xl font-bold text-white mb-16 text-center uppercase tracking-widest glow-text reveal-on-scroll">
+                <h2
+                    class="text-4xl md:text-6xl font-bold text-white mb-16 text-center uppercase tracking-widest glow-text reveal-on-scroll">
                     The <span class="text-electric">Organisers</span>
                 </h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    
+
                     <div class="flip-card-container h-[450px] w-full reveal-on-scroll" onclick="toggleCard(this)">
                         <div class="flip-card-inner">
-                            <div class="flip-card-front flex flex-col items-center justify-center p-8 border border-white/10 bg-midnight/80">
-                                <img src="Logo_vssut.svg" class="w-32 h-32 object-contain mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" alt="VSSUT Logo">
+                            <div
+                                class="flip-card-front flex flex-col items-center justify-center p-8 border border-white/10 bg-midnight/80">
+                                <img src="Logo_vssut.svg"
+                                    class="w-32 h-32 object-contain mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                                    alt="VSSUT Logo">
                                 <h3 class="text-3xl font-bold text-white mb-2">VSSUT</h3>
                                 <!-- <p class="text-electric font-mono text-xs tracking-[0.3em]">ALMA MATER</p> -->
                                 <div class="mt-4 text-gray-500 text-xs font-mono">CLICK TO KNOW MORE</div>
@@ -518,18 +836,25 @@ on exposure to industry practices.
                             <div class="flip-card-back">
                                 <h3 class="text-xl text-electric font-bold mb-4">VSSUT, Burla</h3>
                                 <p class="text-gray-300 text-sm leading-relaxed text-justify">
-                                    Established in 1956, VSSUT is Odisha’s first engineering college and a leading technical university in India. Known for academic excellence, it offers quality education in engineering, science, and management. Situated near Hirakud Dam, it fosters a strong culture of coding, robotics, and innovation, empowering future-ready engineers.
+                                    Established in 1956, VSSUT is Odisha’s first engineering college and a leading
+                                    technical university in India. Known for academic excellence, it offers quality
+                                    education in engineering, science, and management. Situated near Hirakud Dam, it
+                                    fosters a strong culture of coding, robotics, and innovation, empowering
+                                    future-ready engineers.
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flip-card-container h-[450px] w-full reveal-on-scroll" onclick="toggleCard(this)" style="transition-delay: 0.1s">
+                    <div class="flip-card-container h-[450px] w-full reveal-on-scroll" onclick="toggleCard(this)"
+                        style="transition-delay: 0.1s">
                         <div class="flip-card-inner">
-                            <div class="flip-card-front flex flex-col items-center justify-center p-8 border border-white/10 bg-midnight/80">
-                                 <div class="w-32 h-32 mb-6 rounded-full overflow-hidden border border-electric/30">
-                                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Coding">
-                                 </div>
+                            <div
+                                class="flip-card-front flex flex-col items-center justify-center p-8 border border-white/10 bg-midnight/80">
+                                <div class="w-32 h-32 mb-6 rounded-full overflow-hidden border border-electric/30">
+                                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=400&auto=format&fit=crop"
+                                        class="w-full h-full object-cover" alt="Coding">
+                                </div>
                                 <h3 class="text-3xl font-bold text-white mb-2">CSE Society</h3>
                                 <!-- <p class="text-electric font-mono text-xs tracking-[0.3em]">THE CORE</p> -->
                                 <div class="mt-4 text-gray-500 text-xs font-mono">CLICK TO KNOW MORE</div>
@@ -537,16 +862,23 @@ on exposure to industry practices.
                             <div class="flip-card-back">
                                 <h3 class="text-xl text-electric font-bold mb-4">CSE Society</h3>
                                 <p class="text-gray-300 text-sm leading-relaxed text-justify">
-                                    A self-funded academic body of the CSE Department, VSSUT. It operates with the objective of promoting technical excellence and collaborative learning. Comprising students from B.Tech, M.Tech, and MCA, the society works with active faculty involvement to ensure academic discipline and meaningful engagement.
+                                    A self-funded academic body of the CSE Department, VSSUT. It operates with the
+                                    objective of promoting technical excellence and collaborative learning. Comprising
+                                    students from B.Tech, M.Tech, and MCA, the society works with active faculty
+                                    involvement to ensure academic discipline and meaningful engagement.
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flip-card-container h-[450px] w-full reveal-on-scroll" onclick="toggleCard(this)" style="transition-delay: 0.2s">
+                    <div class="flip-card-container h-[450px] w-full reveal-on-scroll" onclick="toggleCard(this)"
+                        style="transition-delay: 0.2s">
                         <div class="flip-card-inner">
-                            <div class="flip-card-front flex flex-col items-center justify-center p-8 border border-white/10 bg-midnight/80">
-                                <img src="download.jpg" class="w-32 h-auto mb-6 rounded-lg shadow-[0_0_20px_rgba(34,211,238,0.2)]" alt="Enigma Logo">
+                            <div
+                                class="flip-card-front flex flex-col items-center justify-center p-8 border border-white/10 bg-midnight/80">
+                                <img src="download.jpg"
+                                    class="w-32 h-auto mb-6 rounded-lg shadow-[0_0_20px_rgba(34,211,238,0.2)]"
+                                    alt="Enigma Logo">
                                 <h3 class="text-3xl font-bold text-white mb-2">Enigma</h3>
                                 <!-- <p class="text-electric font-mono text-xs tracking-[0.3em]">CODE :: REALITY</p> -->
                                 <div class="mt-4 text-gray-500 text-xs font-mono">CLICK TO KNOW MORE</div>
@@ -554,7 +886,10 @@ on exposure to industry practices.
                             <div class="flip-card-back">
                                 <h3 class="text-xl text-electric font-bold mb-4">Enigma</h3>
                                 <p class="text-gray-300 text-sm leading-relaxed text-justify">
-                                    The official web and coding club of VSSUT, dedicated to promoting competitive programming, AI/ML, and open-source contributions. Enigma organizes hackathons and workshops to nurture problem-solving skills, serving as a platform for tech enthusiasts to collaborate and showcase talent globally.
+                                    The official web and coding club of VSSUT, dedicated to promoting competitive
+                                    programming, AI/ML, and open-source contributions. Enigma organizes hackathons and
+                                    workshops to nurture problem-solving skills, serving as a platform for tech
+                                    enthusiasts to collaborate and showcase talent globally.
                                 </p>
                             </div>
                         </div>
@@ -577,11 +912,16 @@ on exposure to industry practices.
                     <div class="flex-1 flex flex-col md:flex-row gap-8 md:gap-16 justify-start md:justify-end">
                         <div class="text-left md:text-right flex flex-col gap-4">
                             <h3 class="text-gray-400 uppercase tracking-widest text-sm text-3xl">Socials</h3>
-                            <a href="https://www.instagram.com/enigma_vssut/" target="_blank" class="text-2xl">Instagram</a><a href="https://www.linkedin.com/company/enigma-vssut/?originalSubdomain=in" target="_blank" class="text-2xl">LinkedIn</a><a href="https://enigmavssut.in/" target="_blank" class="text-2xl">Website</a>
+                            <a href="https://www.instagram.com/enigma_vssut/" target="_blank"
+                                class="text-2xl">Instagram</a><a
+                                href="https://www.linkedin.com/company/enigma-vssut/?originalSubdomain=in"
+                                target="_blank" class="text-2xl">LinkedIn</a><a href="https://enigmavssut.in/"
+                                target="_blank" class="text-2xl">Website</a>
                         </div>
                         <div class="text-left md:text-right flex flex-col gap-4">
                             <h3 class="text-gray-400 uppercase tracking-widest text-sm">Menu</h3>
-                            <a onclick="scrollToSection('#hero')" class="text-2xl">Home</a><a href="mailto:enigma.vssut@gmail.com" class="text-2xl">Contact</a>
+                            <a onclick="scrollToSection('#hero')" class="text-2xl">Home</a><a
+                                href="mailto:enigma.vssut@gmail.com" class="text-2xl">Contact</a>
                         </div>
                     </div>
                 </div>
@@ -602,10 +942,10 @@ on exposure to industry practices.
             const isMobile = window.innerWidth < 768;
 
             // --- 1. SMOOTH SCROLL ---
-            const lenis = new Lenis({ 
+            const lenis = new Lenis({
                 lerp: isMobile ? 0.1 : 0.07, // Looser lerp on mobile for less catch-up lag
-                wheelMultiplier: 0.8, 
-                smoothWheel: true, 
+                wheelMultiplier: 0.8,
+                smoothWheel: true,
                 syncTouch: true
             });
 
@@ -629,9 +969,9 @@ on exposure to industry practices.
             // --- 3. ENTRANCE ANIMATION ---
             const tl = gsap.timeline({ delay: 0.2 });
             tl.to('.hero-title', { yPercent: 0, duration: 1.5, stagger: 0.1, ease: "power4.out" })
-              .to('.hero-sub', { yPercent: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, "-=1.2")
-              .to('#countdown', { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=1.0");
-              // Removed Button Animation from here
+                .to('.hero-sub', { yPercent: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, "-=1.2")
+                .to('#countdown', { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=1.0");
+            // Removed Button Animation from here
 
             // --- 4. COUNTDOWN ---
             let buttonRevealed = false;
@@ -643,8 +983,8 @@ on exposure to industry practices.
 
                 if (distance < 0) {
                     const el = document.getElementById("countdown");
-                    if(el) el.innerHTML = "<div class='text-electric text-2xl font-bold animate-pulse'>SYSTEM ONLINE</div>";
-                    
+                    if (el) el.innerHTML = "<div class='text-electric text-2xl font-bold animate-pulse'>SYSTEM ONLINE</div>";
+
                     // Reveal Button Logic
                     if (!buttonRevealed) {
                         gsap.to('#magnet-btn-container', { autoAlpha: 1, y: 0, scale: 1, duration: 1.2, ease: "elastic.out(1, 0.5)" });
@@ -658,13 +998,13 @@ on exposure to industry practices.
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                const d = document.getElementById("days"); if(d) d.innerText = days < 10 ? "0" + days : days;
-                const h = document.getElementById("hours"); if(h) h.innerText = hours < 10 ? "0" + hours : hours;
-                const m = document.getElementById("minutes"); if(m) m.innerText = minutes < 10 ? "0" + minutes : minutes;
-                const s = document.getElementById("seconds"); if(s) s.innerText = seconds < 10 ? "0" + seconds : seconds;
+                const d = document.getElementById("days"); if (d) d.innerText = days < 10 ? "0" + days : days;
+                const h = document.getElementById("hours"); if (h) h.innerText = hours < 10 ? "0" + hours : hours;
+                const m = document.getElementById("minutes"); if (m) m.innerText = minutes < 10 ? "0" + minutes : minutes;
+                const s = document.getElementById("seconds"); if (s) s.innerText = seconds < 10 ? "0" + seconds : seconds;
             }
             setInterval(updateTimer, 1000);
-            updateTimer(); 
+            updateTimer();
 
             // --- 5. MOBILE MENU ---
             const menuToggle = document.getElementById('mobile-toggle');
@@ -672,11 +1012,11 @@ on exposure to industry practices.
             const mobileLinks = document.querySelectorAll('.mobile-link');
             let isMenuOpen = false;
 
-            if(menuToggle) {
+            if (menuToggle) {
                 menuToggle.addEventListener('click', () => {
                     isMenuOpen = !isMenuOpen;
-                    if(isMenuOpen) {
-                        menuToggle.innerHTML = '&times;'; 
+                    if (isMenuOpen) {
+                        menuToggle.innerHTML = '&times;';
                         gsap.to(mobileMenu, { autoAlpha: 1, duration: 0.5 });
                         gsap.fromTo(mobileLinks, { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.4 });
                     } else {
@@ -691,7 +1031,7 @@ on exposure to industry practices.
                     const target = link.dataset.target;
                     scrollToSection(target);
                     isMenuOpen = false;
-                    if(menuToggle) menuToggle.innerHTML = '&#9776;';
+                    if (menuToggle) menuToggle.innerHTML = '&#9776;';
                     gsap.to(mobileMenu, { autoAlpha: 0, duration: 0.5 });
                 });
             });
@@ -703,15 +1043,15 @@ on exposure to industry practices.
             function animateCursor() {
                 cursorX += (mouseX - cursorX) * 0.15;
                 cursorY += (mouseY - cursorY) * 0.15;
-                if(cursor) cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+                if (cursor) cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
                 requestAnimationFrame(animateCursor);
             }
-            if(!isMobile) animateCursor();
+            if (!isMobile) animateCursor();
 
             const btnContainer = document.getElementById('magnet-btn-container');
             const btn = document.querySelector('.insane-btn');
-            
-            if(btnContainer && btn) {
+
+            if (btnContainer && btn) {
                 btnContainer.addEventListener('mousemove', (e) => {
                     const rect = btnContainer.getBoundingClientRect();
                     const x = e.clientX - rect.left - rect.width / 2;
@@ -719,11 +1059,11 @@ on exposure to industry practices.
                     gsap.to(btn, { x: x * 0.5, y: y * 0.5, duration: 0.4, ease: 'power3.out', overwrite: true });
                 });
                 btnContainer.addEventListener('mouseleave', () => gsap.to(btn, { x: 0, y: 0, duration: 1, ease: 'elastic.out(1, 0.3)' }));
-                
+
                 // Add Hover classes for cursor
                 document.querySelectorAll('a, button, .card-slice, .nav-link, .mobile-link, #mobile-toggle, .glass-panel').forEach(el => {
-                    el.addEventListener('mouseenter', () => { if(cursor) cursor.classList.add('hovered'); });
-                    el.addEventListener('mouseleave', () => { if(cursor) cursor.classList.remove('hovered'); });
+                    el.addEventListener('mouseenter', () => { if (cursor) cursor.classList.add('hovered'); });
+                    el.addEventListener('mouseleave', () => { if (cursor) cursor.classList.remove('hovered'); });
                 });
             }
 
@@ -761,8 +1101,8 @@ on exposure to industry practices.
                 // "Scan" Activation Animation
                 ScrollTrigger.create({
                     trigger: item,
-                    start: "top 60%", 
-                    end: "bottom 40%", 
+                    start: "top 60%",
+                    end: "bottom 40%",
                     onEnter: () => item.classList.add('event-active'),
                     onLeave: () => item.classList.remove('event-active'),
                     onEnterBack: () => item.classList.add('event-active'),
@@ -777,11 +1117,11 @@ on exposure to industry practices.
             gsap.set("#card-2 .face", { borderRadius: "0 30px 30px 0" });
 
             const speakerTl = gsap.timeline({
-                scrollTrigger: { 
-                    trigger: "#speakers", 
-                    start: "top top", 
-                    end: "+=700", 
-                    scrub: 1.5, 
+                scrollTrigger: {
+                    trigger: "#speakers",
+                    start: "top top",
+                    end: "+=700",
+                    scrub: 1.5,
                     pin: true,
                     anticipatePin: 1,
                     onUpdate: (self) => {
@@ -789,7 +1129,7 @@ on exposure to industry practices.
                         canClickSpeakers = self.progress > 0.5;
                         const cards = document.querySelectorAll('.card-slice');
                         cards.forEach(card => {
-                            if(canClickSpeakers) {
+                            if (canClickSpeakers) {
                                 card.classList.add('active-card');
                             } else {
                                 card.classList.remove('active-card');
@@ -800,12 +1140,12 @@ on exposure to industry practices.
             });
 
             speakerTl.to("#header-text", { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" })
-              .to("#card-1", { xPercent: -55, duration: 2, ease: "expo.inOut" }, "split")
-              .to("#card-2", { xPercent: 55, duration: 2, ease: "expo.inOut" }, "split")
-              .to(".face", { borderRadius: "30px", duration: 1 }, "split")
-              .to(".card-slice", { rotationY: 180, duration: 3, ease: "expo.inOut" }, "split+=0.5")
-              .to("#card-1", { xPercent: -3, rotationZ: -1, duration: 2, ease: "power2.inOut" }, "join")
-              .to("#card-2", { xPercent: 3, rotationZ: 1, duration: 2, ease: "power2.inOut" }, "join");
+                .to("#card-1", { xPercent: -55, duration: 2, ease: "expo.inOut" }, "split")
+                .to("#card-2", { xPercent: 55, duration: 2, ease: "expo.inOut" }, "split")
+                .to(".face", { borderRadius: "30px", duration: 1 }, "split")
+                .to(".card-slice", { rotationY: 180, duration: 3, ease: "expo.inOut" }, "split+=0.5")
+                .to("#card-1", { xPercent: -3, rotationZ: -1, duration: 2, ease: "power2.inOut" }, "join")
+                .to("#card-2", { xPercent: 3, rotationZ: 1, duration: 2, ease: "power2.inOut" }, "join");
 
             // Event Listeners for Speakers with Logic Check
             document.getElementById('card-1').addEventListener('click', () => {
@@ -817,7 +1157,7 @@ on exposure to industry practices.
 
             // --- 10. NEW: HERO STARFIELD BACKGROUND (WARP SPEED) ---
             const heroContainer = document.getElementById("hero-canvas");
-            if(heroContainer) {
+            if (heroContainer) {
                 const scene = new THREE.Scene();
                 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
                 const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobile }); // Disable AA on mobile
@@ -829,11 +1169,11 @@ on exposure to industry practices.
                 const starGeometry = new THREE.BufferGeometry();
                 const starCount = isMobile ? 1000 : 3000; // Reduce count for mobile
                 const starPositions = new Float32Array(starCount * 3);
-                
-                for(let i=0; i<starCount * 3; i++) {
+
+                for (let i = 0; i < starCount * 3; i++) {
                     starPositions[i] = (Math.random() - 0.5) * 600;
                 }
-                
+
                 starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
                 const starMaterial = new THREE.PointsMaterial({
                     color: 0x22d3ee,
@@ -841,19 +1181,19 @@ on exposure to industry practices.
                     transparent: true,
                     opacity: 0.8
                 });
-                
+
                 const starField = new THREE.Points(starGeometry, starMaterial);
                 scene.add(starField);
                 camera.position.z = 1;
 
                 function animateHero() {
                     requestAnimationFrame(animateHero);
-                    
+
                     // Warp Speed Effect
                     const positions = starField.geometry.attributes.position.array;
-                    for(let i=2; i<positions.length; i+=3) {
+                    for (let i = 2; i < positions.length; i += 3) {
                         positions[i] += 2; // Speed
-                        if(positions[i] > 200) {
+                        if (positions[i] > 200) {
                             positions[i] = -300; // Reset
                         }
                     }
@@ -873,29 +1213,29 @@ on exposure to industry practices.
 
             // --- 11. REACTOR FOOTER ---
             const container = document.getElementById("footer-canvas");
-            if(container) {
+            if (container) {
                 const scene = new THREE.Scene();
                 scene.fog = new THREE.FogExp2(0x010103, 0.1);
-                const camera = new THREE.PerspectiveCamera(75, container.offsetWidth/container.offsetHeight, 0.1, 1000);
-                camera.position.set(0,0,5); 
+                const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+                camera.position.set(0, 0, 5);
                 const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobile }); // Performance fix
                 renderer.setSize(container.offsetWidth, container.offsetHeight);
                 renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 2)); // Performance fix
                 container.appendChild(renderer.domElement);
 
                 const group = new THREE.Group(); scene.add(group);
-                const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1,1), new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true, emissive: 0x22d3ee, emissiveIntensity: 2 })); group.add(core);
-                const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.6,0.02,16,100), new THREE.MeshStandardMaterial({ color:0xffffff, metalness:1, roughness:0.1, emissive:0x172554, emissiveIntensity:0.2 })); group.add(ring1);
-                const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.2,0.05,16,100), new THREE.MeshStandardMaterial({ color:0x000000, metalness:0.9, roughness:0.2, emissive:0x3b82f6, emissiveIntensity:0.5 })); ring2.rotation.x = Math.PI / 2; group.add(ring2);
-                
+                const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true, emissive: 0x22d3ee, emissiveIntensity: 2 })); group.add(core);
+                const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.02, 16, 100), new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1, roughness: 0.1, emissive: 0x172554, emissiveIntensity: 0.2 })); group.add(ring1);
+                const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.05, 16, 100), new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 0.9, roughness: 0.2, emissive: 0x3b82f6, emissiveIntensity: 0.5 })); ring2.rotation.x = Math.PI / 2; group.add(ring2);
+
                 const pCount = isMobile ? 300 : 800; // Reduce particles on mobile
-                const pGeo = new THREE.BufferGeometry(); const pPos = new Float32Array(pCount*3);
-                for(let i=0; i<pCount*3; i++) pPos[i] = (Math.random()-0.5)*12;
+                const pGeo = new THREE.BufferGeometry(); const pPos = new Float32Array(pCount * 3);
+                for (let i = 0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 12;
                 pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
                 const pMesh = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.015, color: 0x22d3ee, transparent: true, opacity: 0.8 })); group.add(pMesh);
 
                 let isFooterVisible = false;
-                new IntersectionObserver(e => isFooterVisible = e[0].isIntersecting, {threshold:0.1}).observe(document.querySelector('footer'));
+                new IntersectionObserver(e => isFooterVisible = e[0].isIntersecting, { threshold: 0.1 }).observe(document.querySelector('footer'));
                 const mouse = { x: 0, y: 0 };
                 window.addEventListener("mousemove", (e) => {
                     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -908,36 +1248,37 @@ on exposure to industry practices.
                     trigger: "footer", start: "top bottom", end: "bottom bottom", scrub: true,
                     onUpdate: (self) => {
                         scrollProgress = self.progress;
-                        if(fCont) gsap.set(fCont, { yPercent: -50 * (1 - scrollProgress) });
+                        if (fCont) gsap.set(fCont, { yPercent: -50 * (1 - scrollProgress) });
                     }
                 });
 
                 function animate() {
                     requestAnimationFrame(animate);
-                    if(!isFooterVisible) return;
-                    core.rotation.y+=0.002; core.rotation.x-=0.002;
-                    ring1.rotation.x+=0.01; ring1.rotation.y+=0.005;
-                    ring2.rotation.y-=0.005; pMesh.rotation.y+=0.001;
+                    if (!isFooterVisible) return;
+                    core.rotation.y += 0.002; core.rotation.x -= 0.002;
+                    ring1.rotation.x += 0.01; ring1.rotation.y += 0.005;
+                    ring2.rotation.y -= 0.005; pMesh.rotation.y += 0.001;
                     const time = Date.now() * 0.0015;
                     const scale = 1 + Math.sin(time) * 0.05;
                     core.scale.set(scale, scale, scale);
                     const targetZ = -5 + (scrollProgress * 5);
                     group.position.z += (targetZ - group.position.z) * 0.05;
-                    
+
                     if (!isMobile) { // Disable mouse interaction on footer for mobile
                         group.rotation.x += (mouse.y * 0.2 - group.rotation.x) * 0.05;
                         group.rotation.y += (mouse.x * 0.2 - group.rotation.y) * 0.05;
                     }
-                    
+
                     renderer.render(scene, camera);
                 }
                 animate();
                 window.addEventListener("resize", () => {
-                    camera.aspect = container.offsetWidth/container.offsetHeight;
+                    camera.aspect = container.offsetWidth / container.offsetHeight;
                     camera.updateProjectionMatrix(); renderer.setSize(container.offsetWidth, container.offsetHeight);
                 });
             }
         });
     </script>
 </body>
+
 </html>
